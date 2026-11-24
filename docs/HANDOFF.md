@@ -26,6 +26,8 @@ Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md),
 | 2026-11-23 | Scholar | Baseline inference completed with all 60 predictions. LoRA stopped before its first update on a chat-template tokenization error. | Base `b67f5d9` with script and lockfile hashes matching `f80abb4`. 20 Alpaca pilot pairs. | 494383 / A40 | `$SCRATCH/cs577/runs/494383/` | Corrected tokenization and verified assistant-answer alignment on 40 direct and untrusted prompts. |
 | 2026-11-23 | Scholar | Completed in 52 seconds. Verified 60 unique predictions and four finite LoRA updates. Peak GPU allocation was 5.87 GiB for inference and 6.34 GiB for training. The smoke test processed 227 input tokens/s across four updates. | `6cadbe9`, same 20 pairs and model revision. Greedy decoding with a 128-token cap, BF16, rank 8 on query/value projections, batch size 1, seed 577. | 494390 / A40 | `$SCRATCH/cs577/runs/494390/` | Review `predictions.jsonl`; `smoke.json` records training measurements. |
 
+The 60 [pilot predictions](../artifacts/pilot-run-494390/predictions.jsonl) are tracked for scoring review.
+
 ## Handoff log
 
 | Date | Location | Update | Next action |
