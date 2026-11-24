@@ -4,9 +4,9 @@ See the [spec](docs/PROJECT_SPEC.md), [implementation plan](docs/IMPLEMENTATION_
 
 ## Environment
 
-Use Python 3.11 and uv. Run `./setup.sh` for data preparation or `./setup.sh gpu` for the proposed Scholar dependencies. The GPU pins still need dependency resolution and a CUDA check on Scholar. Once validated, commit the resulting uv.lock so future setup runs use the same resolved packages. Dataset prep uses only the Python standard library and also works with `python3.11` directly.
+Use Python 3.11 and uv. Run `./setup.sh` for data preparation or `./setup.sh gpu` for the Scholar GPU environment. Dataset prep uses only the Python standard library and also works with `python3.11` directly.
 
-The Scholar pilot will need the Qwen2.5-3B-Instruct weights and tokenizer. Cache a pinned model revision on Scholar after checking the GPU environment. Model files are outside Git.
+The Scholar pilot uses the Qwen2.5-3B-Instruct weights and tokenizer at revision `aa8e72537993ba99e69dfaafa59ed015b17504d1`. Model files are outside Git.
 
 ## Alpaca pilot dataset
 
@@ -49,3 +49,20 @@ python3.11 scripts/build_pilot.py data/raw/alpaca_data.json \
 ```
 
 Each JSONL row contains the direct prompt, the clean carrier, and the untrusted-context carrier, plus their expected answers and source indices. Keep pilot rows out of the final test. The target is 20–30 reviewed Alpaca pairs.
+
+## Run the pilot on Scholar
+
+From the repo root, build the pilot dataset as above, then set up the environment and cache the pinned model files. Put Python 3.11 and uv on your PATH first.
+
+```sh
+export UV_PROJECT_ENVIRONMENT="$SCRATCH/cs577/pilot-venv"
+export HF_HOME="$SCRATCH/cs577/hf"
+./setup.sh gpu
+"$UV_PROJECT_ENVIRONMENT/bin/hf" download Qwen/Qwen2.5-3B-Instruct \
+  --revision aa8e72537993ba99e69dfaafa59ed015b17504d1 \
+  --include '*.json' '*.txt' '*.safetensors'
+mkdir -p "$SCRATCH/cs577/runs"
+sbatch --output="$SCRATCH/cs577/runs/slurm-%j.log" scripts/pilot.slurm
+```
+
+The job requests one A40 and runs greedy baseline inference on all three prompt types, followed by four BF16 LoRA updates with loss on the assistant answer and end-of-turn token. It saves predictions, logs, GPU memory and training throughput, input and script hashes, and the smoke-test adapter to `$SCRATCH/cs577/runs/<job-id>/`. The adapter is for verifying the training pipeline. The main experiment uses separate training and evaluation splits.
