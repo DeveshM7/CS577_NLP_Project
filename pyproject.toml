@@ -1,0 +1,15 @@
+[project]
+name = "cs577-nlp-project"
+version = "0.1.0"
+requires-python = ">=3.11,<3.12"
+dependencies = []
+
+[dependency-groups]
+gpu = [
+    "torch==2.9.1",
+    "transformers==4.57.3",
+    "peft==0.18.0",
+]
+
+[tool.uv]
+package = false
