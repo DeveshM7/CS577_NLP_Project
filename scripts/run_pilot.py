@@ -81,12 +81,13 @@ def train(model, tokenizer, pairs, output):
         context = "direct" if step % 2 else "untrusted"
         example = pair[context]
         chat = messages(example)
-        prefix = tokenizer.apply_chat_template(chat, add_generation_prompt=True)
-        full = tokenizer.apply_chat_template(
-            [*chat, {"role": "assistant", "content": example["expected_answer"]}]
+        prompt_ids = tokenizer.apply_chat_template(
+            chat, tokenize=True, add_generation_prompt=True,
         )
-        prompt_ids = tokenizer(prefix, add_special_tokens=False).input_ids
-        ids = tokenizer(full, add_special_tokens=False).input_ids
+        ids = tokenizer.apply_chat_template(
+            [*chat, {"role": "assistant", "content": example["expected_answer"]}],
+            tokenize=True,
+        )
         if ids[:len(prompt_ids)] != prompt_ids or len(ids) <= len(prompt_ids):
             raise ValueError(f"Could not align answer tokens for {pair['id']}")
         answer_end = ids.index(tokenizer.eos_token_id, len(prompt_ids)) + 1
