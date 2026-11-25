@@ -71,9 +71,27 @@ sbatch --output="$SCRATCH/cs577/runs/slurm-%j.log" scripts/pilot.slurm
 
 The job requests one A40 and runs greedy baseline inference on all three prompt types, followed by four BF16 LoRA updates with loss on the assistant answer and end-of-turn token. It saves predictions, logs, GPU memory and training throughput, input and script hashes, and the smoke-test adapter to `$SCRATCH/cs577/runs/<job-id>/`. The adapter is for verifying the training pipeline. The main experiment uses separate training and evaluation splits.
 
-## Build the main dataset
+## Generate the frozen training files
 
-Use the Round 5 selection to reproduce the frozen dataset with the export command below and seed 577. The generated training files live under the Git-ignored `artifacts/` directory. [Frozen selection](data/frozen/pairs.json) · [Freeze manifest](data/frozen/freeze_manifest.json) · [Scholar handoff](docs/HANDOFF.md)
+Use the Round 5 selection and the pinned Alpaca JSON at `data/raw/alpaca_data.json`. Run from the repository root with Python 3.11. [Frozen selection](data/frozen/pairs.json) · [Freeze manifest](data/frozen/freeze_manifest.json) · [Scholar handoff](docs/HANDOFF.md)
+
+```sh
+python3.11 scripts/build_dataset.py data/raw/alpaca_data.json \
+  --selection data/frozen/pairs.json --output artifacts/main --seed 577
+```
+
+The builder checks the Alpaca checksum, excludes pilot rows, and rejects reused IDs and exact duplicates across splits. It writes:
+
+- `train_pairs.jsonl`, `validation_pairs.jsonl`, and `test_pairs.jsonl` with the three prompt variants per pair.
+- `train_B.jsonl` and `train_C.jsonl` with two slots per source and one shared clean example per distinct training carrier. B randomly assigns source contexts and keeps repeated examples when both slots have the same context. C uses both contexts for every source.
+- `manifest.json` with the seed, selection checksum, carrier usage, and actual context coverage.
+- `test_overlap_review.jsonl` with up to three nearest training or validation rows for each test row, based on word overlap. Use these suggestions when auditing new selections.
+
+Use a new output directory for each export you want to keep.
+
+## Curate new dataset drafts
+
+These commands document how the dataset was prepared. To run the experiment, use the frozen export above.
 
 ### Review the unsplit pools
 
@@ -118,17 +136,3 @@ python3.11 scripts/propose_pairs.py data/raw/alpaca_data.json pair \
 ```
 
 For new drafts, check the proposed answers and the scope of the carrier task. Correct or drop pairs when needed and record decisions in the optional `review` field. The exporter reads the selection's `splits` object. A carrier can serve multiple sources within one split.
-
-```sh
-python3.11 scripts/build_dataset.py data/raw/alpaca_data.json \
-  --selection data/frozen/pairs.json --output artifacts/main --seed 577
-```
-
-The builder checks the Alpaca checksum, excludes pilot rows, and rejects reused IDs and exact duplicates across splits. It writes:
-
-- `train_pairs.jsonl`, `validation_pairs.jsonl`, and `test_pairs.jsonl` with the three prompt variants per pair.
-- `train_B.jsonl` and `train_C.jsonl` with two slots per source and one shared clean example per distinct training carrier. B randomly assigns source contexts and keeps repeated examples when both slots have the same context. C uses both contexts for every source.
-- `manifest.json` with the seed, selection checksum, carrier usage, and actual context coverage.
-- `test_overlap_review.jsonl` with up to three nearest training or validation rows for each test row, based on word overlap. Review these suggestions for near-duplicates before freezing the splits.
-
-Use a new output directory for each export you want to keep.

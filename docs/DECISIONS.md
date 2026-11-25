@@ -11,7 +11,7 @@ This log records the working design from the discussion. The documents are draft
 | Freeze splits before building examples and track provenance | Working choice | Disjoint row IDs prevent reuse across splits. Exact-match checks and a targeted similarity review reduce obvious near-duplicate overlap. |
 | Use 1,000 train, 100 validation, and 200 test pairs, with 20 pilot pairs held out | Frozen | The Round 5 checksums define the main data. The pilot stays outside the main splits. |
 | Share the carrier mapping across B and C | Implemented | Training uses 200 carriers five times each. Validation and test use one distinct carrier per pair. |
-| Use Qwen2.5-3B-Instruct with supervised LoRA for B and C | Pilot verified | The Scholar pilot completed four updates. Main export and adapter reload checks are next. |
+| Use Qwen2.5-3B-Instruct with supervised LoRA for B and C | Pilot verified | The Scholar pilot completed four updates. Short training and adapter reload checks with the main exports are next. |
 | Keep the same decoding and training settings across comparable arms | Working choice | Differences in settings would complicate interpretation. Log token counts and training steps. |
 | Use paired accuracy as primary and report four supporting rates | Working choice | Separates direct correctness, carrier correctness, following the embedded request, and false refusals. |
 | Prioritize BIPIA, then IHEval, with pairwise loss deferred | Proposed scope | The held-out Alpaca experiment answers the primary question. External slices test transfer. |
