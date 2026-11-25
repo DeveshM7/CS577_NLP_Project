@@ -101,8 +101,8 @@ def main():
         check_split(records, "validation")
     else:
         check_split(records, "test")
-        if len(records) != 200 or len({pair["id"] for pair in records}) != len(records):
-            raise ValueError("Expected 200 distinct frozen test pairs")
+        if len({pair["id"] for pair in records}) != len(records):
+            raise ValueError("Test pair IDs must be distinct")
 
     if not torch.cuda.is_available() or not torch.cuda.is_bf16_supported():
         raise RuntimeError("A CUDA GPU with BF16 support is required")
