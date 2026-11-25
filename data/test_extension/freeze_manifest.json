@@ -1,0 +1,18 @@
+{
+  "alpaca_revision": "761dc5bfbdeeffa89b8bff5d038781a4055f796a",
+  "alpaca_sha256": "2eddafc6b977608d778aaab8dfc7e50e547b3af9826dfb9e909d9fc362e4a419",
+  "main_selection_sha256": "64dfddf16748dfc4912bc7433ef97340ef72137cfc28dfe78fa4112c300e0578",
+  "pilot_selection_sha256": "b1529fdc17bf31d6bf85be1f126a31fd67b518b687109ecf2e9d6c09e8ca616d",
+  "position_seed": 578400,
+  "pairs": 400,
+  "embedded_positions": {
+    "before": 200,
+    "after": 200
+  },
+  "distinct_source_rows": 400,
+  "distinct_carrier_rows": 400,
+  "near_duplicate_threshold": 0.55,
+  "sha256": {
+    "test_pairs.jsonl": "3503884dbb328eff344fc5fc26f3b910e7f960a19441a7507f0ed484c4c78319"
+  }
+}

@@ -1,6 +1,6 @@
 # Mac and Scholar handoff
 
-**Current phase** — Both training seeds have completed held-out inference and first-pass scoring. The proposed next step is to curate 400 fresh held-out pairs locally.
+**Current phase** — Both training seeds have completed held-out inference and first-pass scoring on the original set. The 400-pair test extension is frozen and ready for Scholar inference.
 
 Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md), and [decision log](DECISIONS.md) before starting new work. Use this file for current work and run status. Record durable design changes in the decision log.
 
@@ -21,9 +21,10 @@ Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md),
 - Use `train_B.jsonl` and `train_C.jsonl` for training. The three `*_pairs.jsonl` files provide the direct, clean carrier, and embedded-request prompts for each pair. Check their hashes against the corresponding filenames in the freeze manifest, which records them under `export/`.
 - Use the same pinned model and tokenizer across arms. The run registry lists the trained adapters, inference jobs, and source snapshots.
 
-## Proposed test-set extension
+## Frozen test-set extension
 
-- The local session curates 400 fresh pairs with 200 embedded requests before the carrier data and 200 after. Apply the existing answer review and overlap checks against the pilot and all frozen splits. Freeze the new pairs and their prompts with checksums. Preserve the original 200 pairs and their exact prompts so the saved predictions remain comparable.
+- The extension has 400 fresh pairs from 800 unused Alpaca rows. It places 200 embedded requests before the carrier data and 200 after. The manifest records the extension checksum, Alpaca revision, and the original selection checksum. The original 200 prompts and their predictions remain the reference for that evaluation. [Extension prompts](../data/test_extension/test_pairs.jsonl) · [Freeze manifest](../data/test_extension/freeze_manifest.json)
+- A second review covered all 400 pairs and replaced 10 standalone rows and 29 carrier rows across 38 pairs. The revised file passed the Alpaca provenance, split isolation, duplicate, and position checks. For example, extension line 359 asks for uppercase conversion. Uppercasing the embedded request along with the carrier text is authorized and earns carrier credit under the existing rubric.
 - The Scholar session updates the inference runner's current 200-pair check and runs A plus the B/C adapters from both seeds on the new prompts with the same decoding settings. Score the new set with the existing rubric and report its result before the combined 600-pair result.
 
 ## Completed Scholar smoke tests
