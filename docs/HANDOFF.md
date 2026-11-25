@@ -1,6 +1,6 @@
 # Mac and Scholar handoff
 
-**Current phase** — First-pass scoring is complete for the original 200 pairs and the 400-pair test extension. Both training seeds have fresh and combined tallies.
+**Current phase** — The second scoring pass is complete for B and C at both training seeds on all 600 held-out pairs. A's baseline uses first-pass scores.
 
 Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md), and [decision log](DECISIONS.md) before starting new work. Use this file for current work and run status. Record durable design changes in the decision log.
 
@@ -23,32 +23,34 @@ Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md),
 
 | Test set | Training seed | B | C | C minus B, percentage points | Paired 95% bootstrap interval |
 |---|---:|---:|---:|---:|---:|
-| Original 200 | 577 | 133/200 | 138/200 | +2.50 | [−1.50, +7.00] |
-| Original 200 | 578 | 135/200 | 138/200 | +1.50 | [−1.50, +5.00] |
-| Fresh 400 | 577 | 305/400 | 299/400 | −1.50 | [−3.75, +0.75] |
-| Fresh 400 | 578 | 306/400 | 298/400 | −2.00 | [−4.75, +0.50] |
-| Combined 600 | 577 | 438/600 | 437/600 | −0.17 | [−2.17, +1.83] |
-| Combined 600 | 578 | 441/600 | 436/600 | −0.83 | [−2.83, +1.17] |
+| Original 200 | 577 | 137/200 | 142/200 | +2.50 | [−1.00, +6.50] |
+| Original 200 | 578 | 137/200 | 139/200 | +1.00 | [−2.00, +4.00] |
+| Fresh 400 | 577 | 302/400 | 297/400 | −1.25 | [−3.50, +1.00] |
+| Fresh 400 | 578 | 305/400 | 297/400 | −2.00 | [−4.50, +0.50] |
+| Combined 600 | 577 | 439/600 | 439/600 | 0.00 | [−2.00, +2.00] |
+| Combined 600 | 578 | 442/600 | 436/600 | −1.00 | [−3.00, +1.00] |
 
-C led on the original set and B led on the fresh set at both seeds. The combined gaps were one and five pairs, and the intervals include zero. The experiment leaves the benefit of guaranteed dual-context exposure uncertain at this training budget and within this prompt format. The same 600 examples were evaluated at both seeds. The intervals reflect test-pair uncertainty conditional on the trained adapters and scoring labels. Combined intervals resample within the original and fresh sets to preserve their sizes. A passed 42/200 original pairs and 110/400 fresh pairs, for 152/600 combined.
+C led on the original set and B led on the fresh set at both seeds. On the combined set, the arms tied at seed 577 and B passed six more pairs at seed 578. Both combined intervals include zero, leaving the benefit of guaranteed exposure to both contexts uncertain at this training budget and within this prompt format. Both seeds used the same 600 examples. The 95% intervals use 10,000 paired bootstrap draws conditional on the trained adapters and scoring labels. The combined bootstrap resamples within the original and fresh sets to preserve their sizes. On the first pass, A passed 42/200 original pairs and 110/400 fresh pairs, for 152/600 combined.
 
 ### Supporting metrics on the combined 600 pairs
 
 | Model | Direct correct | Clean carrier correct | Carrier correct with embedded text | Embedded requests followed | False refusals |
 |---|---:|---:|---:|---:|---:|
-| A | 533/600 | 506/600 | 394/600 | 314/600 | 19/1,800 |
-| B, seed 577 | 546/600 | 522/600 | 483/600 | 8/600 | 0/1,800 |
-| C, seed 577 | 544/600 | 514/600 | 483/600 | 8/600 | 0/1,800 |
-| B, seed 578 | 542/600 | 519/600 | 491/600 | 7/600 | 0/1,800 |
-| C, seed 578 | 547/600 | 507/600 | 481/600 | 6/600 | 0/1,800 |
+| A (first pass) | 533/600 | 506/600 | 394/600 | 314/600 | 19/1,800 |
+| B, seed 577 | 547/600 | 522/600 | 482/600 | 11/600 | 0/1,800 |
+| C, seed 577 | 544/600 | 516/600 | 485/600 | 9/600 | 0/1,800 |
+| B, seed 578 | 543/600 | 519/600 | 490/600 | 7/600 | 0/1,800 |
+| C, seed 578 | 546/600 | 508/600 | 482/600 | 6/600 | 0/1,800 |
 
-The secondary finding is that both fine-tuned arms followed far fewer embedded requests than A, about 1% versus 52% on this evaluation. The fresh set showed the same pattern, with 208/400 for A and 4–6/400 per fine-tuned arm. B had higher carrier accuracy on the fresh set at both seeds. C had one fewer embedded-request execution at seed 578.
+The fine-tuned arms followed 1.00–1.83% of embedded requests in the second pass. A followed 52.33% in the first pass. On the fresh set, A followed 208/400 embedded requests and the fine-tuned runs followed 4–8/400 per run. B had higher carrier accuracy with embedded text on the fresh set at both seeds. On the combined set, C followed two fewer embedded requests at seed 577 and one fewer at seed 578.
 
 ### Discussion and verification
 
-- The labels are from one AI reviewer with model identities visible. Some open-ended references require judgment. The rubric accepts equivalent answers and distinguishes performing an embedded request from manipulating its text as data. A clear attempt at the embedded deliverable counts as execution even when the answer is wrong.
-- The most useful review is to hide model identities and independently score the B/C pass/fail disagreements and embedded-request executions. There are 39 pair disagreements at each seed in the combined set. Reconcile labels under the same rubric and recompute the results. Then discuss whether an external test of transfer fits the remaining time.
-- The full fresh and combined counts, score sheets, and examples of judgment calls are in `$SCRATCH/cs577/held-out-review-extension.GYlYKu/` as `summary.json`, `fresh_scores.csv`, `combined_scores.csv`, and `review_notes.txt`. The original rubric and seed-577 scores are in `$SCRATCH/cs577/held-out-review.d6hysA/`. The original seed-578 scores are in `$SCRATCH/cs577/held-out-review-seed578.YciySk/`. The registry below identifies the raw prediction jobs.
+- The same AI reviewer reread all 7,200 B/C responses. The reviewer knew the earlier aggregate results and saw the prompts, references, and responses with model identities, seeds, and prior labels hidden during the initial reread. The reviewer then compared labels with the first pass and adjudicated differences. At least one label changed on 111 responses across 35 pairs.
+- Four newly flagged seed-577 responses across three pairs were borderline. Treating all four as incidental leaves both seed-577 arms at 8/600 embedded requests followed, with the same paired pass totals. In a separate case, all four runs correctly added 6 and 3 and also answered the embedded chemistry question. Each response earned carrier credit and each pair failed.
+- There are 36 combined pair disagreements at seed 577 (18 B-only and 18 C-only) and 38 at seed 578 (22 B-only and 16 C-only). These and the borderline embedded-request cases are available for independent adjudication.
+- The second-pass audit is in `$SCRATCH/cs577/rescore-600.LEoQ7i/`. It contains `scores.csv` with all B/C prompts, references, predictions, and labels, `changed_scores.csv` with disagreements against the earlier review, `summary.json` with tallies by test set, `review_notes.txt` with adjudication details, and `input_sha256.txt` with input hashes.
+- The first-pass combined files, including A's scores, are in `$SCRATCH/cs577/held-out-review-extension.GYlYKu/`. The original rubric and seed-577 scores are in `$SCRATCH/cs577/held-out-review.d6hysA/`. The original seed-578 scores are in `$SCRATCH/cs577/held-out-review-seed578.YciySk/`. The run registry identifies the raw prediction jobs.
 
 ## Main dataset handoff
 
@@ -97,3 +99,4 @@ The 60 [pilot predictions](../artifacts/pilot-run-494390/predictions.jsonl) are 
 | 2026-11-23 | Local | Verified the pinned Alpaca source and exported 20 reviewed pairs with 60 prompts. | Prepare the first Qwen pilot job. |
 | 2026-11-23 | Scholar | Implemented and verified the pilot on the former `scholar/pilot` branch. Stored predictions, logs, provenance, and the smoke-test adapter in Scholar scratch. | The pilot outputs are available for later scoring. |
 | 2026-11-25 | Scholar | Scored the fresh 400 pairs and pooled the labels with the original 200. Recorded the research interpretation and review limits above. | Local session reviews the analysis and coordinates blind adjudication. |
+| 2026-11-25 | Scholar | Rescored all 7,200 B/C responses with model and seed identities hidden during the reread. Recorded revised per-seed tallies, intervals, and borderline execution judgments. | Use the second-pass B/C results and identify A as a first-pass baseline in the report. |

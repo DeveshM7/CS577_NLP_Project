@@ -6,7 +6,7 @@ We test whether seeing each training request in both roles, as an authorized ins
 
 ## Current status
 
-The Scholar pilot and B/C training at both seeds are complete. A, B, and C were scored on the original 200 held-out pairs. C led B by 2.5 percentage points in paired accuracy at training seed 577 and 1.5 points at seed 578. Both arms followed embedded requests on 2 of 200 prompts at each seed. The proposed follow-up adds 400 fresh held-out pairs and uses the existing adapters. [Scholar handoff](docs/HANDOFF.md)
+The Scholar pilot, B/C training at both seeds, and the 600-pair Alpaca evaluation are complete. After rescoring all 7,200 B/C responses, the arms tied at 439/600 paired passes at seed 577. At seed 578, B passed 442/600 and C passed 436/600. Both combined paired bootstrap intervals include zero. The fine-tuned runs followed 6–11 embedded requests each out of 600. [Results and scoring notes](docs/HANDOFF.md#results-for-local-review)
 
 ## Environment
 

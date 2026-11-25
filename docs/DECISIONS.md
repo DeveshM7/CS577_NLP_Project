@@ -13,9 +13,9 @@ This log records the working design from the discussion. The documents are draft
 | Share the carrier mapping across B and C | Implemented | Training uses 200 carriers five times each. Validation and test use one distinct carrier per pair. |
 | Use Qwen2.5-3B-Instruct with supervised LoRA for B and C | Complete for two seeds | The Scholar pilot and smoke tests verified the pipeline. Full training and reloads completed at training seeds 577 and 578 with frozen data seed 577. |
 | Keep the same decoding and training settings across comparable arms | Working choice | Differences in settings would complicate interpretation. Log token counts and training steps. |
-| Use paired accuracy as primary and report four supporting rates | Working choice | Separates direct correctness, carrier correctness, following the embedded request, and false refusals. |
-| Add 400 held-out pairs using existing adapters | Proposed follow-up | Both seeds showed a small positive C–B paired-accuracy gap. Fresh pairs test whether that gap carries over to other tasks. |
-| Prioritize BIPIA, then IHEval, with pairwise loss deferred | Proposed scope | The held-out Alpaca experiment answers the primary question. External slices test transfer. |
+| Use paired accuracy as primary and report supporting rates | Working choice | Tracks direct correctness, carrier correctness with and without embedded text, embedded-request execution, and false refusals. |
+| Add 400 held-out pairs using existing adapters | Complete | The fresh set favored B at both seeds. The combined set tied at seed 577 and favored B by six paired passes at seed 578. [Rescored results](HANDOFF.md#paired-accuracy) |
+| Prioritize BIPIA, then IHEval, with pairwise loss deferred | Proposed scope | The Alpaca evaluation estimates the primary effect within the study's prompt format. External slices would test transfer. |
 | Keep code and lightweight preparation local and run Qwen with Slurm on Scholar | Working choice | The Mac is the main editing workspace. Scholar supplies GPU compute. |
 
 ## Prompt formatting limitations
@@ -31,5 +31,5 @@ Both training arms use the same 200 clean carrier examples, one per distinct tra
 
 ## Open decisions
 
-- Blind review of B/C disagreements and curation of the proposed test extension.
+- Whether to have a second reviewer independently adjudicate B/C disagreements and borderline execution cases after the completed second pass.
 - Benchmark slices, priority of the diversity control, and actual teammate ownership.
