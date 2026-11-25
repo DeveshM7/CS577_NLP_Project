@@ -1,10 +1,12 @@
 # CS 577 project specification
 
-**Status:** Draft for team review. Implementation and experiments are pending.
+**Status** — The Scholar pilot is complete and the main dataset is frozen. Main training and evaluation are pending.
 
 ## Goal
 
 Test whether supervised fine-tuning improves instruction-boundary recognition when every source request appears in both a trusted and an untrusted context. The primary comparison is matched-context training (C) versus random-context training (B) on requests held out from fine-tuning. We hypothesize that C will handle more paired cases correctly while maintaining legitimate task performance.
+
+The proposal motivates this comparison with evidence that defensive fine-tuning can make models reject benign requests that resemble attacks. Showing the same wording in both roles tests whether guaranteed coverage improves the handling of legitimate requests while preserving resistance to embedded instructions. [Project proposal](MaheshwariBhatSinghCS577.pdf)
 
 An instruction boundary distinguishes the user's authorized task from the text supplied for that task. A model may need to read the data to complete the task. For instance, it should answer the multiplication question when asked directly and extract the city when that question is merely part of the note being analyzed.
 
@@ -17,28 +19,29 @@ The multiplication question is from Alpaca. The city task is illustrative. **Car
 
 ## Data and comparison
 
-Use the [Stanford Alpaca release](https://huggingface.co/datasets/tatsu-lab/alpaca) as the proposed source. Its roughly 52,000 records contain an instruction, optional input, and generated reference answer. About 40% contain input. StruQ used a cleaned Alpaca variant and motivates the format that separates the task and data. We plan to write a small builder so we can control per-instruction coverage and audit provenance. Record the exact dataset revision and shortlist criteria.
+The frozen dataset uses Stanford Alpaca revision `761dc5bfbdeeffa89b8bff5d038781a4055f796a`. StruQ motivates the separate task and data fields. The exporter tracks source and carrier IDs, references, and context assignments. [Stanford Alpaca](https://huggingface.co/datasets/tatsu-lab/alpaca) · [Dataset freeze](DECISIONS.md#frozen-dataset-pairs)
 
 - Select self-contained source requests and separate carrier tasks with input their answers depend on. Start with benign, short tasks with verifiable answers. Favor carrier inputs where the expected answer stays valid in the paired example. Manually audit suitability and reference answers.
 - Partition source and carrier rows before forming examples. Keep each Alpaca row ID in one split across both roles. For the selected rows, check for exact instruction-and-input duplicates after normalizing case and whitespace. For near-duplicates, use text similarity to flag the closest train/validation matches for each held-out row and review likely overlaps. Move confirmed duplicates into the same split or drop them. This is a best-effort audit of obvious overlap. Preserve source ID, carrier ID where applicable, context, split, and reference answers. Carriers may be reused within a split. Track reuse and avoid concentrating the test on a handful of carriers.
 - Use the same authorized-task and data format across arms. Keep the candidate variants, carrier assignment and formatting comparable across B and C. Record how repeated same-context slots in B are represented. If identical candidates are repeated, retain those repeats and report their frequency.
-- Starting targets are 1,000 distinct training requests, 100 validation pairs, and 200 final test pairs, plus carrier pools. Target 200 distinct training carriers, or about five source requests per carrier for the core 1,000-source experiment. Assign carriers evenly using a fixed seed, reassign invalid pairings, and save one mapping shared by B and C. For the final test, aim for one distinct carrier per pair. These are planning targets subject to the pilot. Keep 20–30 pilot pairs out of the final test.
+- The frozen splits contain 1,000 training, 100 validation, and 200 test pairs and exclude the 20 pilot pairs. Training uses 200 distinct carriers, each serving five source requests. Validation and test each use one carrier per pair.
+- Each split places the embedded request before the carrier data in half of its pairs and after it in half. Seed 577 determines placement. The exporter uses a single newline between the two texts and preserves line breaks within each text.
 
-| Arm | Starting checkpoint | Training data at the target size |
+| Arm | Starting checkpoint | Training data |
 |---|---|---|
 | A | Qwen2.5-3B-Instruct | No project fine-tuning |
-| B | Same Qwen checkpoint | Two slots for each of the same 1,000 requests. Randomly assign contexts with exactly 1,000 trusted and 1,000 untrusted slots overall. About half the source requests are expected to receive both contexts. |
-| C | Same Qwen checkpoint | One trusted and one untrusted slot for each of the same 1,000 requests. |
-| Diversity control | Same Qwen checkpoint | One slot each for 2,000 distinct requests, including C's training pool where practical. Keep the same overall context balance and training budget. |
+| B | Same Qwen checkpoint | 1,000 direct and 1,000 embedded-request slots assigned randomly across the 1,000 source requests, plus 200 clean carriers. At seed 577, 478 sources appear in both contexts and 522 receive two identical same-context examples. |
+| C | Same Qwen checkpoint | One direct and one embedded-request slot for each of the same 1,000 source requests, plus the same 200 clean carriers as B. |
+| Diversity control | Same Qwen checkpoint | Optional follow-up using 2,000 distinct requests. Final training mix is open. |
 | Optional pairwise objective | Same Qwen checkpoint | C's data with an additional pairwise loss. Defer until the core experiment is complete. |
 
-B and C isolate the effect of guaranteeing coverage with the same source pool. The diversity control asks whether that benefit holds against broader source coverage on the same sample budget.
+B and C each train on 2,200 examples. Their comparison tests whether guaranteeing both roles for every source request improves held-out paired accuracy at a fixed example budget. The shared clean examples show that a populated data field can contain ordinary task data and no embedded request. Injection is still present in 1,000 of 1,200 data-bearing training examples in each arm. Clean carrier accuracy and false refusals on held-out data help measure whether the model overreacts to ordinary inputs.
 
 ## Model and training
 
 - Start with [Qwen2.5-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct). It is already instruction-tuned and its 3.09B size makes repeated single-GPU runs more practical. Use the same pinned model and tokenizer revisions for A, B, and C.
 - Use Python, uv, PyTorch, Hugging Face Transformers, and PEFT. Use supervised fine-tuning with [LoRA](https://arxiv.org/abs/2106.09685). Freeze Qwen's weights and fit separate adapters for B and C on the expected assistant answer tokens. StruQ used full fine-tuning on Llama-7B and Mistral-7B. Our comparison varies the training data while keeping the adaptation procedure fixed.
-- Pilot starting points are two epochs, learning rate 1e-4, and effective batch size 32. Decide LoRA rank and target layers, sequence length, precision, batch accumulation, optimizer, and seeds after the smoke test. Match the training configuration and update budget across B and C. Log actual examples, tokens, updates, achieved context coverage, and hardware.
+- Run a short LoRA job with each frozen training export on Scholar and verify that the adapter saves and reloads for inference. Confirm full-run hyperparameters after that check. Match the training configuration and update budget across B and C and log example counts, tokens, updates, context coverage, and hardware.
 - Prepare datasets and review scores on the Mac. Run Qwen inference and training in Slurm jobs on Scholar. Prefer one full A30 (24 GB) or A40 (48 GB), subject to allocation and measured fit. Use identical decoding settings across arms and save raw predictions.
 
 ## Evaluation and success criteria
@@ -54,9 +57,9 @@ The **primary result** is C minus B in paired accuracy on the same held-out exam
 
 For “Boston. The product is 12,” carrier-task correctness and attack success are both positive, refusal is negative, and the pair fails. Direct-request accuracy comes from the separate direct response. Report these signals alongside the paired result so a gain can be traced to its source. A decrease in attack success with a corresponding decrease in legitimate task accuracy requires explanation. There is no preset numerical threshold yet.
 
-**Scoring is open.** Pilot task-specific normalization for clear answers and a written rubric for ambiguous cases. “The answer is 12” is a correct direct answer. “Boston, at 12 noon” illustrates why a raw substring match is unreliable for detecting whether the embedded question was followed. Compare candidate scoring rules against blinded human labels and have two reviewers independently score a subset. If automation is unreliable, use a smaller manually scored final set with the rubric fixed before comparing arms. StruQ used a distinctive phrase plus manual review for most attack tests, and GPT-4 preference judgments through AlpacaEval 1.0 for general utility. Those are precedents for different scoring questions.
+**Scoring rubric deferred.** Use paired accuracy as the primary outcome and record direct correctness, carrier correctness, embedded-request execution, and false refusals. When the authorized task legitimately applies to the embedded text as data, the carrier response can be correct even if it differs from the Alpaca reference. Scoring guidance for ambiguous outputs and the choice of scoring method remain open. Preserve raw outputs so they can be scored once the rubric is set.
 
-- **Pilot:** Check unmodified Qwen on clean tasks, then paired tasks. The clean tasks establish basic competence. The paired tasks reveal boundary errors and whether responses can be scored consistently. A short LoRA smoke run measures memory and throughput.
+- **Pilot** — Scholar job 494390 produced 60 baseline predictions from 20 pairs and completed four LoRA updates. See the [run registry](HANDOFF.md#run-registry) for the measured memory and throughput.
 - **Main evaluation:** Run A, B, and C on the same held-out Alpaca pairs. Include clean carrier inputs as a utility baseline. Review disagreements and categorize errors such as wrong answers, unnecessary refusals, or answers to both requests.
 - **External evaluation:** The proposal names BIPIA and IHEval. Prioritize a fixed BIPIA slice for transfer to indirect instructions in data, then an IHEval slice for broader authority conflicts as time allows. Pin slices and scoring methods, report subset sizes, and explain scope changes in the report.
 

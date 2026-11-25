@@ -2,6 +2,10 @@
 
 See the [spec](docs/PROJECT_SPEC.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), and [Scholar handoff](docs/HANDOFF.md).
 
+## Current status
+
+The 20-pair Scholar pilot is complete and the 1,300 main pairs are frozen. The main training export gives B and C 2,200 examples each, including the same 200 clean carrier examples. The next step is a short LoRA training and adapter-reload test for both arms on Scholar. The scoring rubric is deferred. [Decision log](docs/DECISIONS.md)
+
 ## Environment
 
 Use Python 3.11 and uv. Run `./setup.sh` for data preparation or `./setup.sh gpu` for the Scholar GPU environment. Dataset prep uses only the Python standard library and also works with `python3.11` directly.
@@ -66,3 +70,65 @@ sbatch --output="$SCRATCH/cs577/runs/slurm-%j.log" scripts/pilot.slurm
 ```
 
 The job requests one A40 and runs greedy baseline inference on all three prompt types, followed by four BF16 LoRA updates with loss on the assistant answer and end-of-turn token. It saves predictions, logs, GPU memory and training throughput, input and script hashes, and the smoke-test adapter to `$SCRATCH/cs577/runs/<job-id>/`. The adapter is for verifying the training pipeline. The main experiment uses separate training and evaluation splits.
+
+## Build the main dataset
+
+Use the Round 5 selection to reproduce the frozen dataset with the export command below and seed 577. The generated training files live under the Git-ignored `artifacts/` directory. [Frozen selection](data/frozen/pairs.json) · [Freeze manifest](data/frozen/freeze_manifest.json) · [Scholar handoff](docs/HANDOFF.md)
+
+### Review the unsplit pools
+
+Review candidates in batches, starting with standalone questions. Approve rows whose original Alpaca answer is sound and replace rejected rows with new candidates. Keep row IDs and review decisions so replacements can be checked against previous batches. Each approved-pool JSON contains the Alpaca revision and SHA-256 plus a `rows` list with each original row, its zero-based `row` ID, and a `review` note.
+
+```sh
+python3.11 scripts/validate_pool.py data/raw/alpaca_data.json \
+  artifacts/source_audit/approved_through_0600.json --role source --count 200
+python3.11 -m unittest discover -s tests
+```
+
+The validator checks the row count, pilot exclusion, ID and normalized text uniqueness, input requirements, and exact preservation of the original text and answer. Use `--near-duplicate-report` with a new JSON path to flag similar tasks by shared words or character trigrams. Review flagged comparisons before accepting a batch.
+
+### Split the reviewed pools
+
+```sh
+python3.11 scripts/propose_pairs.py data/raw/alpaca_data.json split-reviewed \
+  --sources artifacts/source_audit/approved_through_4046.json \
+  --carriers artifacts/carrier_audit/rechecked_500.json \
+  --train-groups artifacts/split_train_groups.json \
+  --output artifacts/reviewed_splits --seed 577
+```
+
+This assigns all approved rows to train, validation, and test. The standalone counts are 1,000, 100, and 200, and the carrier counts are 200, 100, and 200. The optional group file records reviewed rows that share content. The splitter keeps those rows together in training by swapping each held-out group member with a training row of the same role.
+
+### Draft commands
+
+The following commands generate exploratory selections. For the main experiment, finish reviewing the unsplit pools before assigning splits or pairing rows.
+
+```sh
+python3.11 scripts/propose_pairs.py data/raw/alpaca_data.json pools \
+  --train 1000 --validation 100 --test 200 --output artifacts/main_pools
+```
+
+This writes `sources.json` and `carriers.json` with row IDs, original Alpaca text, and train, validation, and test assignments. The script requires a task and an answer, excludes pilot rows, and prefers answers of up to 12 words. If you omit the size flags, it selects a smaller 30/10/10 draft.
+
+Match the saved rows within each split using a fixed random seed. The training pool uses roughly one carrier for five sources, and validation and test use one carrier per source.
+
+```sh
+python3.11 scripts/propose_pairs.py data/raw/alpaca_data.json pair \
+  --pools artifacts/main_pools --output artifacts/main_selection_draft_full.json
+```
+
+For new drafts, check the proposed answers and the scope of the carrier task. Correct or drop pairs when needed and record decisions in the optional `review` field. The exporter reads the selection's `splits` object. A carrier can serve multiple sources within one split.
+
+```sh
+python3.11 scripts/build_dataset.py data/raw/alpaca_data.json \
+  --selection data/frozen/pairs.json --output artifacts/main --seed 577
+```
+
+The builder checks the Alpaca checksum, excludes pilot rows, and rejects reused IDs and exact duplicates across splits. It writes:
+
+- `train_pairs.jsonl`, `validation_pairs.jsonl`, and `test_pairs.jsonl` with the three prompt variants per pair.
+- `train_B.jsonl` and `train_C.jsonl` with two slots per source and one shared clean example per distinct training carrier. B randomly assigns source contexts and keeps repeated examples when both slots have the same context. C uses both contexts for every source.
+- `manifest.json` with the seed, selection checksum, carrier usage, and actual context coverage.
+- `test_overlap_review.jsonl` with up to three nearest training or validation rows for each test row, based on word overlap. Review these suggestions for near-duplicates before freezing the splits.
+
+Use a new output directory for each export you want to keep.

@@ -34,6 +34,41 @@ def prompt(task, data, answer):
     return {"task": task, "data": data, "expected_answer": answer.strip()}
 
 
+def untrusted_prompt(task, data, source, answer, *, position=None):
+    if position is None:
+        return prompt(task, f"{data}\n\n{source}", answer)
+    if position == "before":
+        data = f"{source}\n{data}"
+    elif position == "after":
+        data = f"{data}\n{source}"
+    else:
+        raise ValueError(f"Unknown embedded instruction position: {position!r}")
+    return prompt(task, data, answer)
+
+
+def build_pair(rows, entry, split, revision, digest, *, position=None, require_review=True):
+    source_id, carrier_id = entry["source_row"], entry["carrier_row"]
+    source, _ = select_row(rows, source_id, needs_input=False)
+    task, data = select_row(rows, carrier_id, needs_input=True)
+    review = entry.get("review", "")
+    if not isinstance(review, str):
+        raise ValueError(f"Review note for row {carrier_id} must be text")
+    if require_review and not review.strip():
+        raise ValueError(f"Document why the carrier answer remains valid for row {carrier_id}")
+    return {
+        "id": f"{split}-{source_id}-{carrier_id}",
+        "split": split,
+        "alpaca_revision": revision,
+        "alpaca_sha256": digest,
+        "source_row": source_id,
+        "carrier_row": carrier_id,
+        "review": review.strip(),
+        "direct": prompt(source, "", entry["direct_answer"]),
+        "clean_carrier": prompt(task, data, entry["carrier_answer"]),
+        "untrusted": untrusted_prompt(task, data, source, entry["carrier_answer"], position=position),
+    }
+
+
 def build_pairs(rows, selection, digest):
     if selection["alpaca_sha256"] != digest:
         raise ValueError("Selection was reviewed against a different Alpaca file")
@@ -49,24 +84,7 @@ def build_pairs(rows, selection, digest):
         raise ValueError("Use distinct source and carrier rows for each pilot pair")
 
     for entry in entries:
-        source_id, carrier_id = entry["source_row"], entry["carrier_row"]
-        source, _ = select_row(rows, source_id, needs_input=False)
-        task, data = select_row(rows, carrier_id, needs_input=True)
-        review = entry["review"]
-        if not isinstance(review, str) or not review.strip():
-            raise ValueError(f"Document why the carrier answer remains valid for row {carrier_id}")
-        yield {
-            "id": f"pilot-{source_id}-{carrier_id}",
-            "split": "pilot",
-            "alpaca_revision": revision,
-            "alpaca_sha256": digest,
-            "source_row": source_id,
-            "carrier_row": carrier_id,
-            "review": review.strip(),
-            "direct": prompt(source, "", entry["direct_answer"]),
-            "clean_carrier": prompt(task, data, entry["carrier_answer"]),
-            "untrusted": prompt(task, f"{data}\n\n{source}", entry["carrier_answer"]),
-        }
+        yield build_pair(rows, entry, "pilot", revision, digest)
 
 
 def main():

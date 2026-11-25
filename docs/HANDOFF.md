@@ -1,6 +1,6 @@
 # Mac and Scholar handoff
 
-**Current phase:** Scholar pilot complete. Baseline predictions are ready for scoring review.
+**Current phase** — The Scholar pilot and local dataset freeze are complete. Next, prepare and test the main B/C training jobs on Scholar.
 
 Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md), and [decision log](DECISIONS.md) before starting new work. Use this file for current work and run status. Record durable design changes in the decision log.
 
@@ -8,9 +8,16 @@ Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md),
 
 | Area | State |
 |---|---|
-| Data | The tracked selection is `data/pilot_selection.json`. Scholar regenerated `artifacts/pilot.jsonl` from the checksum-verified Alpaca revision `761dc5bfbdeeffa89b8bff5d038781a4055f796a`. The JSONL SHA-256 is `5fab92219a2e03543567c637e2e1dc4e02e31d8764c3081069b2b04e03ffe3e6`. |
+| Pilot data | The tracked selection is `data/pilot_selection.json`. Scholar regenerated `artifacts/pilot.jsonl` from the checksum-verified Alpaca revision `761dc5bfbdeeffa89b8bff5d038781a4055f796a`. The JSONL SHA-256 is `5fab92219a2e03543567c637e2e1dc4e02e31d8764c3081069b2b04e03ffe3e6`. |
+| Main data | The frozen Round 5 selection contains 1,000 train, 100 validation, and 200 test pairs. The current training export gives B and C 2,200 records each, including the same 200 clean carriers. |
 | Scholar | `scholar/pilot` contains the runner, Slurm script, and uv lockfile. The locked environment is installed at `$SCRATCH/cs577/pilot-venv`. A Slurm job verified PyTorch 2.9.1+cu128 on one A40. Model and tokenizer revision `aa8e72537993ba99e69dfaafa59ed015b17504d1` is cached at `$SCRATCH/cs577/hf`. |
-| Next | Review the 60 baseline predictions, double-score a subset, and establish the scoring rubric before the main experiment. |
+| Next | Stage the main artifacts on Scholar. Set up the main training entry point, run a short LoRA job for each arm, and verify that each saved adapter reloads for inference. The scoring rubric is deferred. |
+
+## Main dataset handoff
+
+- The frozen selection and its manifest are in `data/frozen/`. The generated files are in the Git-ignored `artifacts/reviewed_pairs_repaired_round_5/export_with_clean_carriers/` directory. Transfer that export to Scholar scratch or regenerate it there with the frozen selection and seed 577. Keep the destination with the run provenance. [Export command](../README.md#build-the-main-dataset)
+- Use `train_B.jsonl` and `train_C.jsonl` for training. The three `*_pairs.jsonl` files provide the direct, clean carrier, and embedded-request prompts for each pair. Check their hashes against the corresponding filenames in the freeze manifest, which records them under `export/`.
+- Use the same pinned model and tokenizer for both arms. Record the training file checksums, code revision, seed, and shared settings with each Slurm job. Save enough output from the short runs to verify adapter reload and inference before submitting the full jobs.
 
 ## Coordination
 
