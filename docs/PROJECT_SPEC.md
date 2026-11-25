@@ -2,11 +2,13 @@
 
 **Status** — The Scholar pilot is complete and the main dataset is frozen. Main training and evaluation are pending.
 
-## Goal
+## Research question and hypothesis
 
-Test whether supervised fine-tuning improves instruction-boundary recognition when every source request appears in both a trusted and an untrusted context. The primary comparison is matched-context training (C) versus random-context training (B) on requests held out from fine-tuning. We hypothesize that C will handle more paired cases correctly while maintaining legitimate task performance.
+**Research question.** At a fixed training-example budget, does showing every source request once as an authorized instruction and once as embedded data improve instruction-boundary recognition on held-out requests compared with randomly assigning those same roles?
 
-The proposal motivates this comparison with evidence that defensive fine-tuning can make models reject benign requests that resemble attacks. Showing the same wording in both roles tests whether guaranteed coverage improves the handling of legitimate requests while preserving resistance to embedded instructions. [Project proposal](MaheshwariBhatSinghCS577.pdf)
+**Hypothesis.** Matched-context training (C) will yield higher paired accuracy than random-context training (B). We expect C to complete legitimate requests more reliably, with fewer false refusals and comparable resistance to embedded requests. Direct accuracy, carrier accuracy, embedded-request execution, and false refusals show which behaviors account for a difference in paired accuracy. Both arms start from the same checkpoint and use the same source pool, context totals, and clean carriers. The untuned model (A) provides a baseline.
+
+**Motivation.** Li et al. found that defensive fine-tuning can make models reject benign requests based on prompt position, suspicious wording, or other surface cues. StruQ drew authorized and embedded requests from the same pool. Our experiment tests the effect of guaranteeing exposure to both roles for each exact request. Seeing identical wording in both roles gives the model a reason to rely on the role of the text. [Project proposal](MaheshwariBhatSinghCS577.pdf) · [Li et al.](https://aclanthology.org/2026.acl-long.502/) · [StruQ](https://www.usenix.org/system/files/usenixsecurity25-chen-sizhe.pdf)
 
 An instruction boundary distinguishes the user's authorized task from the text supplied for that task. A model may need to read the data to complete the task. For instance, it should answer the multiplication question when asked directly and extract the city when that question is merely part of the note being analyzed.
 
@@ -35,7 +37,7 @@ The frozen dataset uses Stanford Alpaca revision `761dc5bfbdeeffa89b8bff5d038781
 | Diversity control | Same Qwen checkpoint | Optional follow-up using 2,000 distinct requests. Final training mix is open. |
 | Optional pairwise objective | Same Qwen checkpoint | C's data with an additional pairwise loss. Defer until the core experiment is complete. |
 
-B and C each train on 2,200 examples. Their comparison tests whether guaranteeing both roles for every source request improves held-out paired accuracy at a fixed example budget. The shared clean examples show that a populated data field can contain ordinary task data and no embedded request. Injection is still present in 1,000 of 1,200 data-bearing training examples in each arm. Clean carrier accuracy and false refusals on held-out data help measure whether the model overreacts to ordinary inputs.
+B and C each train on 2,200 examples. Direct prompts have empty data fields. The shared clean carriers show that a populated data field can contain ordinary task data, and 1,000 of 1,200 data-bearing training examples in each arm still contain an embedded request. Held-out clean carriers let us check whether the model completes legitimate tasks with ordinary data. The main comparison estimates the effect of matched exposure within this prompt format. Establishing whether the model relies on instruction authority independently of data-field cues would require additional tests.
 
 ## Model and training
 

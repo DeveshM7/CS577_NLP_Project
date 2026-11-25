@@ -2,6 +2,8 @@
 
 See the [spec](docs/PROJECT_SPEC.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), and [Scholar handoff](docs/HANDOFF.md).
 
+We test whether seeing each training request in both roles, as an authorized instruction and as embedded data, improves paired accuracy on held-out requests compared with assigning those roles randomly at the same training-example budget. [Research question and hypothesis](docs/PROJECT_SPEC.md#research-question-and-hypothesis)
+
 ## Current status
 
 The 20-pair Scholar pilot is complete and the 1,300 main pairs are frozen. The main training export gives B and C 2,200 examples each, including the same 200 clean carrier examples. The next step is a short LoRA training and adapter-reload test for both arms on Scholar. The scoring rubric is deferred. [Decision log](docs/DECISIONS.md)
