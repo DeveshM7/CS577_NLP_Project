@@ -6,7 +6,7 @@ We test whether seeing each training request in both roles, as an authorized ins
 
 ## Current status
 
-The 20-pair Scholar pilot is complete and the 1,300 main pairs are frozen. The main training export gives B and C 2,200 examples each, including the same 200 clean carrier examples. The next step is a short LoRA training and adapter-reload test for both arms on Scholar. The scoring rubric is deferred. [Decision log](docs/DECISIONS.md)
+The Scholar pilot and B/C training at both seeds are complete. A, B, and C were scored on the original 200 held-out pairs. C led B by 2.5 percentage points in paired accuracy at training seed 577 and 1.5 points at seed 578. Both arms followed embedded requests on 2 of 200 prompts at each seed. The proposed follow-up adds 400 fresh held-out pairs and uses the existing adapters. [Scholar handoff](docs/HANDOFF.md)
 
 ## Environment
 

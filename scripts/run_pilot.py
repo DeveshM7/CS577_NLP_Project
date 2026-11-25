@@ -2,6 +2,8 @@
 
 import argparse
 import json
+import math
+import random
 import time
 from pathlib import Path
 
@@ -62,7 +64,40 @@ def infer(model, tokenizer, pairs, output):
             print(f"Finished {context}: {len(pairs)} predictions", flush=True)
 
 
-def train(model, tokenizer, pairs, output):
+def encode_example(tokenizer, example):
+    chat = messages(example)
+    prompt_ids = tokenizer.apply_chat_template(
+        chat, tokenize=True, add_generation_prompt=True,
+    )
+    ids = tokenizer.apply_chat_template(
+        [*chat, {"role": "assistant", "content": example["expected_answer"]}],
+        tokenize=True,
+    )
+    prompt_length = len(prompt_ids)
+    if ids[:prompt_length] != prompt_ids or len(ids) <= prompt_length:
+        raise ValueError(f"Could not align answer tokens for {example['id']}")
+    answer_end = ids.index(tokenizer.eos_token_id, prompt_length)
+    if answer_end == prompt_length:
+        raise ValueError(f"No supervised answer tokens for {example['id']}")
+    answer = tokenizer.decode(ids[prompt_length:answer_end], skip_special_tokens=False)
+    if answer != example["expected_answer"].strip():
+        raise ValueError(f"Supervised tokens do not match the answer for {example['id']}")
+    return ids[:answer_end + 1], prompt_length
+
+
+def training_batches(examples, epochs, batch_size, *, shuffle=False, seed=SEED):
+    rng = random.Random(seed)
+    for epoch in range(1, epochs + 1):
+        order = list(range(len(examples)))
+        if shuffle:
+            rng.shuffle(order)
+        for start in range(0, len(order), batch_size):
+            yield epoch, [examples[index] for index in order[start:start + batch_size]]
+
+
+def train(model, tokenizer, examples, output, *, encoded=None, epochs=1, batch_size=1, seed=SEED):
+    if encoded is None:
+        encoded = [encode_example(tokenizer, example) for example in examples]
     model.config.use_cache = False
     model = get_peft_model(model, LoraConfig(
         task_type="CAUSAL_LM", r=RANK, lora_alpha=16,
@@ -77,35 +112,34 @@ def train(model, tokenizer, pairs, output):
     updates = []
     torch.cuda.synchronize()
     started = time.perf_counter()
-    for step, pair in enumerate(pairs[:STEPS], start=1):
-        context = "direct" if step % 2 else "untrusted"
-        example = pair[context]
-        chat = messages(example)
-        prompt_ids = tokenizer.apply_chat_template(
-            chat, tokenize=True, add_generation_prompt=True,
-        )
-        ids = tokenizer.apply_chat_template(
-            [*chat, {"role": "assistant", "content": example["expected_answer"]}],
-            tokenize=True,
-        )
-        if ids[:len(prompt_ids)] != prompt_ids or len(ids) <= len(prompt_ids):
-            raise ValueError(f"Could not align answer tokens for {pair['id']}")
-        answer_end = ids.index(tokenizer.eos_token_id, len(prompt_ids)) + 1
-        ids = ids[:answer_end]
-        input_ids = torch.tensor([ids], device="cuda")
-        labels = input_ids.clone()
-        labels[:, :len(prompt_ids)] = -100
+    batches = training_batches(
+        list(zip(examples, encoded, strict=True)), epochs, batch_size,
+        shuffle=epochs > 1, seed=seed,
+    )
+    for step, (epoch, batch) in enumerate(batches, start=1):
         optimizer.zero_grad(set_to_none=True)
-        loss = model(input_ids=input_ids, labels=labels).loss
-        if not torch.isfinite(loss).item():
-            raise RuntimeError(f"Nonfinite loss on update {step}")
-        loss.backward()
+        losses = []
+        tokens = supervised_tokens = 0
+        for example, (ids, prompt_length) in batch:
+            input_ids = torch.tensor([ids], device="cuda")
+            labels = input_ids.clone()
+            labels[:, :prompt_length] = -100
+            loss = model(input_ids=input_ids, labels=labels).loss
+            value = loss.item()
+            if not math.isfinite(value):
+                raise RuntimeError(f"Nonfinite loss on update {step}, example {example['id']}")
+            (loss / len(batch)).backward()
+            losses.append(value)
+            tokens += len(ids)
+            supervised_tokens += len(ids) - prompt_length
         optimizer.step()
         result = {
-            "step": step, "id": pair["id"], "context": context,
-            "loss": loss.item(), "tokens": len(ids),
-            "supervised_tokens": len(ids) - len(prompt_ids),
+            "step": step, "epoch": epoch, "examples": len(batch),
+            "loss": sum(losses) / len(batch), "tokens": tokens,
+            "supervised_tokens": supervised_tokens,
         }
+        if batch_size == 1:
+            result.update(id=example["id"], context=example["context"])
         updates.append(result)
         print(json.dumps(result), flush=True)
 
@@ -119,6 +153,8 @@ def train(model, tokenizer, pairs, output):
         "rank": RANK,
         "learning_rate": LEARNING_RATE,
         "batch_size": 1,
+        "effective_batch_size": batch_size,
+        "epochs": epochs,
     }
 
 
@@ -149,7 +185,11 @@ def main():
         infer(model, tokenizer, pairs, args.output / "predictions.jsonl")
         summary.update(predictions=len(pairs) * len(CONTEXTS), max_new_tokens=MAX_NEW_TOKENS)
     else:
-        summary.update(train(model, tokenizer, pairs, args.output))
+        examples = []
+        for index, pair in enumerate(pairs[:STEPS]):
+            context = "direct" if index % 2 == 0 else "untrusted"
+            examples.append({**pair[context], "id": pair["id"], "context": context})
+        summary.update(train(model, tokenizer, examples, args.output))
     summary.update(
         peak_allocated_bytes=torch.cuda.max_memory_allocated(),
         peak_reserved_bytes=torch.cuda.max_memory_reserved(),

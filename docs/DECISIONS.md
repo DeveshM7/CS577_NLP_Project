@@ -11,9 +11,10 @@ This log records the working design from the discussion. The documents are draft
 | Freeze splits before building examples and track provenance | Working choice | Disjoint row IDs prevent reuse across splits. Exact-match checks and a targeted similarity review reduce obvious near-duplicate overlap. |
 | Use 1,000 train, 100 validation, and 200 test pairs, with 20 pilot pairs held out | Frozen | The Round 5 checksums define the main data. The pilot stays outside the main splits. |
 | Share the carrier mapping across B and C | Implemented | Training uses 200 carriers five times each. Validation and test use one distinct carrier per pair. |
-| Use Qwen2.5-3B-Instruct with supervised LoRA for B and C | Pilot verified | The Scholar pilot completed four updates. Short training and adapter reload checks with the main exports are next. |
+| Use Qwen2.5-3B-Instruct with supervised LoRA for B and C | Complete for two seeds | The Scholar pilot and smoke tests verified the pipeline. Full training and reloads completed at training seeds 577 and 578 with frozen data seed 577. |
 | Keep the same decoding and training settings across comparable arms | Working choice | Differences in settings would complicate interpretation. Log token counts and training steps. |
 | Use paired accuracy as primary and report four supporting rates | Working choice | Separates direct correctness, carrier correctness, following the embedded request, and false refusals. |
+| Add 400 held-out pairs using existing adapters | Proposed follow-up | Both seeds showed a small positive C–B paired-accuracy gap. Fresh pairs test whether that gap carries over to other tasks. |
 | Prioritize BIPIA, then IHEval, with pairwise loss deferred | Proposed scope | The held-out Alpaca experiment answers the primary question. External slices test transfer. |
 | Keep code and lightweight preparation local and run Qwen with Slurm on Scholar | Working choice | The Mac is the main editing workspace. Scholar supplies GPU compute. |
 
@@ -30,6 +31,5 @@ Both training arms use the same 200 clean carrier examples, one per distinct tra
 
 ## Open decisions
 
-- Scoring rubric and implementation are deferred. A response can earn carrier credit by correctly applying the authorized task to embedded text as data.
-- Confirm full-run LoRA settings, sequence length, precision, run sizes, and seeds after the main training smoke tests on Scholar.
-- Benchmark slices, priority of the diversity control versus a seed repeat, and actual teammate ownership.
+- Blind review of B/C disagreements and curation of the proposed test extension.
+- Benchmark slices, priority of the diversity control, and actual teammate ownership.
