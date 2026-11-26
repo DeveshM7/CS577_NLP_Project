@@ -8,6 +8,8 @@ We test whether seeing each training request in both roles, as an authorized ins
 
 The Scholar pilot, B/C training at both seeds, and the 600-pair Alpaca evaluation are complete. After rescoring all 7,200 B/C responses, the arms tied at 439/600 paired passes at seed 577. At seed 578, B passed 442/600 and C passed 436/600. Both combined paired bootstrap intervals include zero. The fine-tuned runs followed 6–11 embedded requests each out of 600. [Results and scoring notes](docs/HANDOFF.md#results-for-local-review)
 
+The audited Arm D dataset is ready for the diversity follow-up. D uses 2,000 distinct requests across the same number of training examples as B and C. [Scholar run instructions](docs/HANDOFF.md#arm-d-diversity-follow-up)
+
 ## Environment
 
 Use Python 3.11 and uv. Run `./setup.sh` for data preparation or `./setup.sh gpu` for the Scholar GPU environment. Dataset prep uses only the Python standard library and also works with `python3.11` directly.
@@ -90,6 +92,14 @@ The builder checks the Alpaca checksum, excludes pilot rows, and rejects reused 
 - `test_overlap_review.jsonl` with up to three nearest training or validation rows for each test row, based on word overlap. Use these suggestions when auditing new selections.
 
 Use a new output directory for each export you want to keep.
+
+### Export Arm D
+
+```sh
+python3.11 scripts/build_diversity.py data/raw/alpaca_data.json --output artifacts/diversity
+```
+
+The builder exports `train_D.jsonl` with 1,000 direct, 1,000 embedded, and 200 clean carrier examples. It also writes `train_D_embedded_pairs.jsonl` for inspection and a manifest to verify against the frozen checksums. [Selection](data/diversity/selection.json) · [Audit](data/diversity/review.json) · [Freeze manifest](data/diversity/freeze_manifest.json)
 
 ## Curate new dataset drafts
 

@@ -1,0 +1,19 @@
+{
+  "alpaca_sha256": "2eddafc6b977608d778aaab8dfc7e50e547b3af9826dfb9e909d9fc362e4a419",
+  "selection_sha256": "a283f60a8850683d0913eb86d368bf229bc2e3aa8356937b09b1da620562c16c",
+  "seed": 577,
+  "context_counts": {
+    "direct": 1000,
+    "untrusted": 1000,
+    "clean_carrier": 200
+  },
+  "embedded_positions": {
+    "after": 500,
+    "before": 500
+  },
+  "distinct_sources": 2000,
+  "sha256": {
+    "train_D.jsonl": "7cb4af3cca5600b2700981f41f4734c649fa021bbda3e2e49c13287b933da936",
+    "train_D_embedded_pairs.jsonl": "20c87115c59fb151a48b1ed72963155453e9e4065bf3a8e3270a3b1be90ffa01"
+  }
+}

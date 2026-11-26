@@ -1,6 +1,6 @@
 # Mac and Scholar handoff
 
-**Current phase** — The second scoring pass is complete for B and C at both training seeds on all 600 held-out pairs. A's baseline uses first-pass scores.
+**Current phase** — Arm D's audited dataset is ready for Scholar training at seeds 577 and 578. The second scoring pass is complete for B and C on all 600 held-out pairs. A's baseline uses first-pass scores.
 
 Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md), and [decision log](DECISIONS.md) before starting new work. Use this file for current work and run status. Record durable design changes in the decision log.
 
@@ -63,6 +63,44 @@ The fine-tuned arms followed 1.00–1.83% of embedded requests in the second pas
 - The extension has 400 fresh pairs from 800 unused Alpaca rows. It places 200 embedded requests before the carrier data and 200 after. The manifest records the extension checksum, Alpaca revision, and the original selection checksum. The original 200 prompts and their predictions remain the reference for that evaluation. [Extension prompts](../data/test_extension/test_pairs.jsonl) · [Freeze manifest](../data/test_extension/freeze_manifest.json)
 - A second review covered all 400 pairs and replaced 10 standalone rows and 29 carrier rows across 38 pairs. The revised file passed the Alpaca provenance, split isolation, duplicate, and position checks. For example, extension line 359 asks for uppercase conversion. Uppercasing the embedded request along with the carrier text is authorized and earns carrier credit under the existing rubric.
 - Extension inference used A plus the B/C adapters from both seeds with the original decoding settings. The fresh test pairs were scored first, then combined with the original 200 for the overall tally.
+
+## Arm D diversity follow-up
+
+- Arm D uses the 1,000 existing training requests and 1,000 additional standalone Alpaca requests. Each group contributes 500 direct requests and 500 embedded requests. Each request appears once. D uses the same 200 carriers five times each for embedded requests, plus the same 200 clean carrier examples. It retains 500 embedded pairings from C and replaces the sources in the other 500 slots while preserving each slot's carrier and placement. [Arm D selection](../data/diversity/selection.json)
+- The selection passed exact and lexical near-duplicate checks against the pilot, frozen selection, and test extension. A subsequent review covered all 1,000 new source rows and 500 new pairings. It replaced 80 direct and 77 embedded source rows and changed 89 of the 500 new pairings. [Audit changes](../data/diversity/review.json) · [Freeze manifest](../data/diversity/freeze_manifest.json)
+
+From the Scholar checkout on `main`, use the same pinned Alpaca JSON, environment, and cached Qwen revision as the B/C jobs. The commands below use the existing Round 5 export in Scholar scratch. If you regenerate it, use seed 577 and verify the validation and original test prompt checksums. [Round 5 export instructions](../README.md#generate-the-frozen-training-files) · [Round 5 checksums](../data/frozen/freeze_manifest.json)
+
+```bash
+git pull --ff-only origin main
+scholar_workspace="$SCRATCH/cs577"
+round5_export="$scholar_workspace/main-round5-seed577"
+arm_d_run=$(mktemp -d "$scholar_workspace/arm-d.XXXXXX")
+source_snapshot="$arm_d_run/source"
+arm_d_export="$arm_d_run/export"
+mkdir "$source_snapshot"
+git archive HEAD | tar -xf - -C "$source_snapshot"
+git log -1 --format=%H > "$source_snapshot/git-provenance.txt"
+
+python3.11 scripts/build_diversity.py data/raw/alpaca_data.json --output "$arm_d_export"
+cmp data/diversity/freeze_manifest.json "$arm_d_export/manifest.json"
+cp "$round5_export/validation_pairs.jsonl" "$arm_d_export/"
+cat "$round5_export/test_pairs.jsonl" data/test_extension/test_pairs.jsonl > "$arm_d_run/test_600.jsonl"
+
+for training_seed in 577 578; do
+  sbatch --output="$arm_d_run/slurm-%j.log" scripts/main_smoke.slurm \
+    D "$arm_d_export" train "$source_snapshot" "$training_seed"
+done
+```
+
+Once both jobs finish, check for 138 optimizer updates and a successful validation reload in each run. Submit one evaluation job per adapter using the job number for the corresponding seed.
+
+```bash
+sbatch --output="$arm_d_run/slurm-%j.log" scripts/main_eval.slurm \
+  D "$arm_d_run/test_600.jsonl" "$source_snapshot" "$scholar_workspace/runs/<training-job-id>/adapter"
+```
+
+Verify 1,800 predictions per adapter across the 600 test pairs and three prompt variants. Use the existing rubric with arm and seed identities hidden during review. Compare D with C separately for each training seed. Report paired accuracy, the paired bootstrap interval, and the supporting rates. Include B as a secondary comparison and report the original 200 and fresh 400 results alongside the combined totals. Record the jobs, artifacts, and results in this handoff. [Rubric and B/C scores](#results-for-local-review)
 
 ## Completed Scholar smoke tests
 

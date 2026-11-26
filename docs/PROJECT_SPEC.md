@@ -34,10 +34,12 @@ The frozen dataset uses Stanford Alpaca revision `761dc5bfbdeeffa89b8bff5d038781
 | A | Qwen2.5-3B-Instruct | No project fine-tuning |
 | B | Same Qwen checkpoint | 1,000 direct and 1,000 embedded-request slots assigned randomly across the 1,000 source requests, plus 200 clean carriers. At seed 577, 478 sources appear in both contexts and 522 receive two identical same-context examples. |
 | C | Same Qwen checkpoint | One direct and one embedded-request slot for each of the same 1,000 source requests, plus the same 200 clean carriers as B. |
-| Diversity control | Same Qwen checkpoint | Optional follow-up using 2,000 distinct requests. Final training mix is open. |
+| D (diversity follow-up) | Same Qwen checkpoint | 2,000 distinct requests, with 1,000 direct requests and 1,000 different embedded requests. Each role uses 500 existing and 500 newly audited requests. D uses the same 200 clean carriers as B and C. |
 | Optional pairwise objective | Same Qwen checkpoint | C's data with an additional pairwise loss. Defer until the core experiment is complete. |
 
 B and C each train on 2,200 examples. Direct prompts have empty data fields. The shared clean carriers show that a populated data field can contain ordinary task data, and 1,000 of 1,200 data-bearing training examples in each arm still contain an embedded request. Held-out clean carriers let us check whether the model completes legitimate tasks with ordinary data. The main comparison estimates the effect of matched exposure within this prompt format. Establishing whether the model relies on instruction authority independently of data-field cues would require additional tests.
+
+D also trains on 2,200 examples. It retains the carrier and position for each of C's 1,000 embedded slots and replaces the source request in 500 of those slots. Compare D with C at each of the two training seeds on the same 600 held-out pairs. The comparison measures the joint effect of increasing request coverage and removing repeated exposure across roles at a fixed training-example budget. B provides a secondary comparison. [Arm D handoff](HANDOFF.md#arm-d-diversity-follow-up)
 
 ## Model and training
 

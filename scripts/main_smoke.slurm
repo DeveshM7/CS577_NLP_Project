@@ -13,8 +13,8 @@ workspace="${SCRATCH:?Scholar scratch is required}/cs577"
 export HF_HOME="${HF_HOME:-$workspace/hf}"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
 env_dir="${UV_PROJECT_ENVIRONMENT:-$workspace/pilot-venv}"
-arm="${1:?Specify arm B or C}"
-case "$arm" in B|C) ;; *) echo "Expected arm B or C" >&2; exit 2 ;; esac
+arm="${1:?Specify arm B, C, or D}"
+case "$arm" in B|C|D) ;; *) echo "Expected arm B, C, or D" >&2; exit 2 ;; esac
 dataset="${2:?Specify the frozen export directory}"
 mode="${3:-smoke}"
 case "$mode" in smoke|train) ;; *) echo "Expected mode smoke or train" >&2; exit 2 ;; esac

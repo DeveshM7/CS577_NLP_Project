@@ -66,14 +66,14 @@ def main():
     parser.add_argument("dataset", type=Path)
     parser.add_argument("output", type=Path, nargs="?")
     parser.add_argument("--seed", type=int, default=SEED)
-    parser.add_argument("--arm", choices=("A", "B", "C"))
+    parser.add_argument("--arm", choices=("A", "B", "C", "D"))
     parser.add_argument("--adapter", type=Path)
     args = parser.parse_args()
     if args.mode != "check" and args.output is None:
         parser.error("output is required for this mode")
     if args.mode == "test":
         if args.arm is None or ((args.adapter is None) != (args.arm == "A")):
-            parser.error("test requires --arm and an adapter for B or C")
+            parser.error("test requires --arm, with --adapter required for B, C, and D")
     elif args.arm is not None or args.adapter is not None:
         parser.error("--arm and --adapter are for test mode")
     records = read_records(args.dataset)

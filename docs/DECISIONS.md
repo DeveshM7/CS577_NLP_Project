@@ -5,7 +5,7 @@ This log records the working design from the discussion. The documents are draft
 | Decision | Status | Rationale |
 |---|---|---|
 | Make B vs. C the primary comparison and use A as the baseline | Core design | Same starting checkpoint, source instructions, and training budget let us study guaranteed dual-context coverage. |
-| Keep the 2,000-distinct-instruction design as a separate diversity control | Follow-up priority | It tests the tradeoff between repeating requests across contexts and covering a broader set. |
+| Run D as the diversity follow-up with 2,000 distinct requests | Training data audited | Each request appears once. D shares the training-example budget and the clean carrier examples with B and C. The D/C comparison measures the tradeoff between broader request coverage and seeing each request in both roles. |
 | Use Alpaca with a custom builder and explicit task/data fields | Working choice | Alpaca provides source requests and input-dependent tasks. StruQ supplies the structured-training precedent. The builder must track source IDs, splits, and context assignments. |
 | Start with self-contained source requests and input-dependent carrier tasks | Working choice | Each reused request is complete by itself. The carrier requires the model to use its data to answer. |
 | Freeze splits before building examples and track provenance | Working choice | Disjoint row IDs prevent reuse across splits. Exact-match checks and a targeted similarity review reduce obvious near-duplicate overlap. |
@@ -32,4 +32,4 @@ Both training arms use the same 200 clean carrier examples, one per distinct tra
 ## Open decisions
 
 - Whether to have a second reviewer independently adjudicate B/C disagreements and borderline execution cases after the completed second pass.
-- Benchmark slices, priority of the diversity control, and actual teammate ownership.
+- Benchmark slices and actual teammate ownership.

@@ -12,14 +12,14 @@ workspace="${SCRATCH:?Scholar scratch is required}/cs577"
 export HF_HOME="${HF_HOME:-$workspace/hf}"
 export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK}"
 env_dir="${UV_PROJECT_ENVIRONMENT:-$workspace/pilot-venv}"
-arm="${1:?Specify arm A, B, or C}"
+arm="${1:?Specify arm A, B, C, or D}"
 dataset="${2:?Specify the frozen test JSONL}"
 source_dir="${3:?Specify the source snapshot directory}"
 adapter_args=()
 case "$arm" in
     A) ;;
-    B|C) adapter_args=(--adapter "${4:?Specify the trained adapter directory}") ;;
-    *) echo "Expected arm A, B, or C" >&2; exit 2 ;;
+    B|C|D) adapter_args=(--adapter "${4:?Specify the trained adapter directory}") ;;
+    *) echo "Expected arm A, B, C, or D" >&2; exit 2 ;;
 esac
 output="$workspace/runs/$SLURM_JOB_ID"
 mkdir "$output"
