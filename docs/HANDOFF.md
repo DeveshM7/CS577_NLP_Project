@@ -1,6 +1,6 @@
 # Mac and Scholar handoff
 
-**Current phase** — Arm D training and evaluation are complete at seeds 577 and 578 on all 600 held-out pairs. The comparisons use second-pass scores for B and C. A's baseline uses first-pass scores.
+**Current phase** — Arm D is pending retraining. The second scoring pass is complete for B and C on all 600 held-out pairs. A's baseline uses first-pass scores.
 
 Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md), and [decision log](DECISIONS.md) before starting new work. Use this file for current work and run status. Record durable design changes in the decision log.
 
@@ -66,6 +66,8 @@ The fine-tuned arms followed 1.00–1.83% of embedded requests in the second pas
 
 ## Arm D diversity follow-up
 
+**Rerun pending.** The initial runs at seeds 577 and 578 used a different training setup than intended. Their scores were withdrawn and their model and evaluation artifacts were deleted. The commands below describe the original setup. Review the intended training configuration before submitting new jobs.
+
 - Arm D uses the 1,000 existing training requests and 1,000 additional standalone Alpaca requests. Each group contributes 500 direct requests and 500 embedded requests. Each request appears once. D uses the same 200 carriers five times each for embedded requests, plus the same 200 clean carrier examples. It retains 500 embedded pairings from C and replaces the sources in the other 500 slots while preserving each slot's carrier and placement. [Arm D selection](../data/diversity/selection.json)
 - The selection passed exact and lexical near-duplicate checks against the pilot, frozen selection, and test extension. A subsequent review covered all 1,000 new source rows and 500 new pairings. It replaced 80 direct and 77 embedded source rows and changed 89 of the 500 new pairings. [Audit changes](../data/diversity/review.json) · [Freeze manifest](../data/diversity/freeze_manifest.json)
 
@@ -102,30 +104,6 @@ sbatch --output="$arm_d_run/slurm-%j.log" scripts/main_eval.slurm \
 
 Verify 1,800 predictions per adapter across the 600 test pairs and three prompt variants. Use the existing rubric with arm and seed identities hidden during review. Compare D with C separately for each training seed. Report paired accuracy, the paired bootstrap interval, and the supporting rates. Include B as a secondary comparison and report the original 200 and fresh 400 results alongside the combined totals. Record the jobs, artifacts, and results in this handoff. [Rubric and B/C scores](#results-for-local-review)
 
-### Arm D results
-
-| Test set | Training seed | D paired passes | C paired passes | D minus C, pp (paired 95% CI) | B paired passes | D minus B, pp (paired 95% CI) |
-|---|---:|---:|---:|---:|---:|---:|
-| Original 200 | 577 | 141/200 | 142/200 | −0.50 [−3.50, +2.50] | 137/200 | +2.00 [−2.50, +6.50] |
-| Original 200 | 578 | 135/200 | 139/200 | −2.00 [−5.50, +1.50] | 137/200 | −1.00 [−5.00, +3.00] |
-| Fresh 400 | 577 | 306/400 | 297/400 | +2.25 [−0.50, +5.25] | 302/400 | +1.00 [−2.00, +4.00] |
-| Fresh 400 | 578 | 302/400 | 297/400 | +1.25 [−1.75, +4.25] | 305/400 | −0.75 [−4.00, +2.50] |
-| Combined 600 | 577 | 447/600 | 439/600 | +1.33 [−0.83, +3.50] | 439/600 | +1.33 [−1.00, +3.83] |
-| Combined 600 | 578 | 437/600 | 436/600 | +0.17 [−2.17, +2.50] | 442/600 | −0.83 [−3.33, +1.67] |
-
-C led D on the original 200 pairs and D led C on the fresh 400 at both seeds. The combined D–C differences were eight and one pairs. Every paired interval includes zero. In the secondary comparison with B, D led at seed 577 and trailed at seed 578. The intervals use 10,000 paired bootstrap draws and preserve the original and fresh sample sizes in the combined estimate.
-
-| Arm D training seed | Direct correct | Clean carrier correct | Carrier correct with embedded text | Embedded requests followed | False refusals |
-|---|---:|---:|---:|---:|---:|
-| 577 | 549/600 | 519/600 | 491/600 | 7/600 | 0/1,800 |
-| 578 | 547/600 | 507/600 | 481/600 | 9/600 | 0/1,800 |
-
-At seed 577, D completed six more carrier tasks with embedded text than C and followed two fewer embedded requests. At seed 578, D completed one fewer carrier task with embedded text and followed three more embedded requests than C.
-
-- D and C shared the same number of training examples and optimizer updates. D had 29,481 supervised tokens per epoch and C had 22,825, a 29.2% difference. D trained and evaluated on full A30s because the A40s were allocated at submission. B and C ran on A40s. All runs used BF16.
-- A single AI reviewer reused 2,874 B/C labels for matching answers on the same pair and context, after trimming surrounding whitespace. The reviewer scored the remaining 726 D responses as 628 distinct answers with seed labels hidden. The uncertainty intervals condition on the trained adapters and review labels.
-- The audit is in `$SCRATCH/cs577/arm-d.FI3Ssv/`. Use `summary.json` for supporting counts and comparisons by test set, `scores.csv` for all D labels, `review_notes.txt` for judgment calls, and `input_sha256.txt` for provenance checks. The run registry lists the raw predictions and adapters.
-
 ## Completed Scholar smoke tests
 
 The smoke jobs used the pilot LoRA settings and two examples per training context in each arm. Answer-token alignment was verified on all sampled examples. The run registry records the finite updates, fresh-process reloads, memory, and throughput.
@@ -149,8 +127,6 @@ The smoke jobs used the pilot LoRA settings and two examples per training contex
 | 2026-11-25 | Scholar | Seed-578 B/C repeat completed. Both arms processed 4,400 records over 138 finite updates and generated three validation predictions after fresh-process adapter reload. B ran for 10m 02s and peaked at 7.10 GiB allocated. C ran for 9m 57s and peaked at 7.13 GiB. The frozen inputs and optimization settings match the seed-577 runs. | Base `23c2263`, source snapshot `$SCRATCH/cs577/seed578-training-source.WxDZbA/`, data seed 577, training seed 578. | B 495084, C 495085 / one A40 each | `$SCRATCH/cs577/runs/{495084,495085}/` | Generate seed-578 predictions on the same 200 test pairs, reusing A's baseline predictions. |
 | 2026-11-25 | Scholar | Seed-578 held-out inference completed for B and C. Verified 600 unique and nonblank predictions per arm, 200 of each context. No responses reached the generation limit. | Original inference source snapshot `$SCRATCH/cs577/held-out-source.27LvT4/`, same 200 test pairs, BF16, greedy, 128 new tokens maximum. Adapters from jobs 495084 and 495085. A's predictions remain in job 495074. | B 495090, C 495091 / one A40 each | `$SCRATCH/cs577/runs/{495090,495091}/`, one `predictions.jsonl` per arm | Score with the established rubric and compare the two training seeds. |
 | 2026-11-25 | Scholar | Frozen 400-pair extension inference completed for A and both B/C seeds. Verified 1,200 unique, nonblank predictions per job. Nine predictions reached the generation limit across all jobs. | Base `44a138a`, source and prompt snapshot `$SCRATCH/cs577/extended-test-source.3zj3a8/`, BF16, greedy, 128 new tokens maximum. Adapters from jobs 494960, 494961, 495084, and 495085. | A 495137, B577 495138, C577 495139, B578 495140, C578 495141 / one A40 each | `$SCRATCH/cs577/runs/{495137,495138,495139,495140,495141}/`, one `predictions.jsonl` per job | Score the 400 fresh pairs before pooling with the original 200. |
-| 2026-11-25 | Scholar | Arm D trained at both seeds. Each run processed 4,400 examples over 138 finite optimizer updates and reloaded its adapter in a fresh process. Wall times were 9m 07s at seed 577 and 7m 45s at seed 578. | `1835999`, checksum-verified D export, same Qwen revision and training settings as B/C. Full A30s were available before A40s. | D577 495322, D578 495323 / one A30 each | `$SCRATCH/cs577/runs/{495322,495323}/` for adapters and training reports. `$SCRATCH/cs577/arm-d.FI3Ssv/` for the dataset and source snapshot. | Evaluate both adapters on the same 600 pairs as B/C. |
-| 2026-11-25 | Scholar | Arm D evaluation completed at both seeds. Verified 1,800 unique, nonblank predictions per seed. One response at seed 577 and two at seed 578 reached the generation cap. Wall times were 11m 42s and 10m 54s. | `1835999`, same 600 test pairs as B/C, BF16, greedy decoding, 128 new tokens maximum. Adapters from jobs 495322 and 495323. | D577 495324, D578 495325 / one A30 each | `$SCRATCH/cs577/runs/{495324,495325}/`, one `predictions.jsonl` per seed | Scored both seeds. See [Arm D results](#arm-d-results). |
 
 The 60 [pilot predictions](../artifacts/pilot-run-494390/predictions.jsonl) are tracked for scoring review.
 
