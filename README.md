@@ -8,7 +8,7 @@ We test whether seeing each training request in both roles, as an authorized ins
 
 The Scholar pilot, B/C training at both seeds, and the 600-pair Alpaca evaluation are complete. After rescoring all 7,200 B/C responses, the arms tied at 439/600 paired passes at seed 577. At seed 578, B passed 442/600 and C passed 436/600. Both combined paired bootstrap intervals include zero. The fine-tuned runs followed 6–11 embedded requests each out of 600. [Results and scoring notes](docs/HANDOFF.md#results-for-local-review)
 
-The audited Arm D dataset is ready for the diversity follow-up. D uses 2,000 distinct requests across the same number of training examples as B and C. [Scholar run instructions](docs/HANDOFF.md#arm-d-diversity-follow-up)
+The Arm D diversity follow-up is complete. D used 2,000 distinct requests across the same number of training examples as B and C. It passed 447/600 pairs at seed 577 and 437/600 at seed 578. Both paired confidence intervals for D minus C include zero. [Arm D results](docs/HANDOFF.md#arm-d-results)
 
 ## Environment
 
