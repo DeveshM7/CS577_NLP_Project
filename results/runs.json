@@ -1,0 +1,153 @@
+{
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "model_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+  "test_pairs": "results/test_pairs.jsonl",
+  "original_pairs": 200,
+  "fresh_pairs": 400,
+  "inference": {
+    "gpu": "NVIDIA A40",
+    "precision": "BF16",
+    "decoding": "greedy",
+    "max_new_tokens": 128
+  },
+  "runs": {
+    "A": {
+      "predictions": {
+        "original": {
+          "job": 495074,
+          "path": "results/predictions/A/original.jsonl"
+        },
+        "fresh": {
+          "job": 495137,
+          "path": "results/predictions/A/fresh.jsonl"
+        }
+      }
+    },
+    "B577": {
+      "training_job": 494960,
+      "training_source_base_commit": "23c2263b643d65916f6f8cb8c6484f749d48595a",
+      "training_input_and_source_sha256": {
+        "scripts/main_smoke.slurm": "bcb54eb6b18b2b3212a51ead14e91e3e9ae77e597575d2dfce9b136ad96c7a16",
+        "scripts/run_main.py": "b8e48f9a2ef9b581fadf12a444745da60b435f3abfe8582757e73a9ad56e2a3d",
+        "scripts/run_pilot.py": "d973b8d6cb9ef324573d23188c44d298b04b06e9af519508c8dd2a3e9b1a94f7",
+        "pyproject.toml": "beddd8082c8348e3a915b7d2e7f0f20f727c14410ba9583d6629c22de6103bde",
+        "uv.lock": "52df7d9332352b53046a606303a65d4ee05e190bac029b1bde58c13c942396b0",
+        "train_B.jsonl": "75a310c836198e5b609b57a60cb1b1b789b5200cb071da1dcdb95142e7d479f1",
+        "validation_pairs.jsonl": "99c820a00c01190f005cae6dfcb59c37cabcaa159840dd53053879e09708ca33"
+      },
+      "adapter": "models/B577",
+      "predictions": {
+        "original": {
+          "job": 495075,
+          "path": "results/predictions/B577/original.jsonl"
+        },
+        "fresh": {
+          "job": 495138,
+          "path": "results/predictions/B577/fresh.jsonl"
+        }
+      }
+    },
+    "C577": {
+      "training_job": 494961,
+      "training_source_base_commit": "23c2263b643d65916f6f8cb8c6484f749d48595a",
+      "training_input_and_source_sha256": {
+        "scripts/main_smoke.slurm": "bcb54eb6b18b2b3212a51ead14e91e3e9ae77e597575d2dfce9b136ad96c7a16",
+        "scripts/run_main.py": "b8e48f9a2ef9b581fadf12a444745da60b435f3abfe8582757e73a9ad56e2a3d",
+        "scripts/run_pilot.py": "d973b8d6cb9ef324573d23188c44d298b04b06e9af519508c8dd2a3e9b1a94f7",
+        "pyproject.toml": "beddd8082c8348e3a915b7d2e7f0f20f727c14410ba9583d6629c22de6103bde",
+        "uv.lock": "52df7d9332352b53046a606303a65d4ee05e190bac029b1bde58c13c942396b0",
+        "train_C.jsonl": "4afb3597520039341308754c7f73315498bda2a559ef102362e5d2d855f9989e",
+        "validation_pairs.jsonl": "99c820a00c01190f005cae6dfcb59c37cabcaa159840dd53053879e09708ca33"
+      },
+      "adapter": "models/C577",
+      "predictions": {
+        "original": {
+          "job": 495076,
+          "path": "results/predictions/C577/original.jsonl"
+        },
+        "fresh": {
+          "job": 495139,
+          "path": "results/predictions/C577/fresh.jsonl"
+        }
+      }
+    },
+    "B578": {
+      "training_job": 495084,
+      "training_source_base_commit": "23c2263b643d65916f6f8cb8c6484f749d48595a",
+      "training_input_and_source_sha256": {
+        "scripts/main_smoke.slurm": "cf5b34d99024ce1ed540534a898927edcb4bfab605ad48c182a4f14ae37a1a6e",
+        "scripts/run_main.py": "c429fb5e8108b9222c5d2f887b8a182e52378a79d020f16a071d03b47cf66aa1",
+        "scripts/run_pilot.py": "6da9846878e93e4ec9bef7f753abebd84a1d686b20559b4e5ed2de63f408a6da",
+        "pyproject.toml": "beddd8082c8348e3a915b7d2e7f0f20f727c14410ba9583d6629c22de6103bde",
+        "uv.lock": "52df7d9332352b53046a606303a65d4ee05e190bac029b1bde58c13c942396b0",
+        "train_B.jsonl": "75a310c836198e5b609b57a60cb1b1b789b5200cb071da1dcdb95142e7d479f1",
+        "validation_pairs.jsonl": "99c820a00c01190f005cae6dfcb59c37cabcaa159840dd53053879e09708ca33"
+      },
+      "adapter": "models/B578",
+      "predictions": {
+        "original": {
+          "job": 495090,
+          "path": "results/predictions/B578/original.jsonl"
+        },
+        "fresh": {
+          "job": 495140,
+          "path": "results/predictions/B578/fresh.jsonl"
+        }
+      }
+    },
+    "C578": {
+      "training_job": 495085,
+      "training_source_base_commit": "23c2263b643d65916f6f8cb8c6484f749d48595a",
+      "training_input_and_source_sha256": {
+        "scripts/main_smoke.slurm": "cf5b34d99024ce1ed540534a898927edcb4bfab605ad48c182a4f14ae37a1a6e",
+        "scripts/run_main.py": "c429fb5e8108b9222c5d2f887b8a182e52378a79d020f16a071d03b47cf66aa1",
+        "scripts/run_pilot.py": "6da9846878e93e4ec9bef7f753abebd84a1d686b20559b4e5ed2de63f408a6da",
+        "pyproject.toml": "beddd8082c8348e3a915b7d2e7f0f20f727c14410ba9583d6629c22de6103bde",
+        "uv.lock": "52df7d9332352b53046a606303a65d4ee05e190bac029b1bde58c13c942396b0",
+        "train_C.jsonl": "4afb3597520039341308754c7f73315498bda2a559ef102362e5d2d855f9989e",
+        "validation_pairs.jsonl": "99c820a00c01190f005cae6dfcb59c37cabcaa159840dd53053879e09708ca33"
+      },
+      "adapter": "models/C578",
+      "predictions": {
+        "original": {
+          "job": 495091,
+          "path": "results/predictions/C578/original.jsonl"
+        },
+        "fresh": {
+          "job": 495141,
+          "path": "results/predictions/C578/fresh.jsonl"
+        }
+      }
+    },
+    "D577": {
+      "training_job": 495623,
+      "training_source_base_commit": "7247a70eba934e7a9a6ba65c054baaa1d7ae6b36",
+      "training_input_and_source_sha256": {
+        "scripts/main_smoke.slurm": "d374301d81484066c81e42d538e5b590a73763b70e47dfdfed454b8d242aa3ac",
+        "scripts/run_main.py": "1fc6e65f22a1a5ec4c1d3a8e205d54892eacb0d2d268857ba75fe55359e88edb",
+        "scripts/run_pilot.py": "6da9846878e93e4ec9bef7f753abebd84a1d686b20559b4e5ed2de63f408a6da",
+        "pyproject.toml": "beddd8082c8348e3a915b7d2e7f0f20f727c14410ba9583d6629c22de6103bde",
+        "uv.lock": "52df7d9332352b53046a606303a65d4ee05e190bac029b1bde58c13c942396b0",
+        "train_D.jsonl": "b731de609b61542a00b3eebc59cbb58a7c4365ea7077badc893b40d8e0d7c46e",
+        "validation_pairs.jsonl": "99c820a00c01190f005cae6dfcb59c37cabcaa159840dd53053879e09708ca33"
+      },
+      "adapter": "models/D577",
+      "queued_evaluation_job": 496018
+    },
+    "D578": {
+      "training_job": 495624,
+      "training_source_base_commit": "7247a70eba934e7a9a6ba65c054baaa1d7ae6b36",
+      "training_input_and_source_sha256": {
+        "scripts/main_smoke.slurm": "d374301d81484066c81e42d538e5b590a73763b70e47dfdfed454b8d242aa3ac",
+        "scripts/run_main.py": "1fc6e65f22a1a5ec4c1d3a8e205d54892eacb0d2d268857ba75fe55359e88edb",
+        "scripts/run_pilot.py": "6da9846878e93e4ec9bef7f753abebd84a1d686b20559b4e5ed2de63f408a6da",
+        "pyproject.toml": "beddd8082c8348e3a915b7d2e7f0f20f727c14410ba9583d6629c22de6103bde",
+        "uv.lock": "52df7d9332352b53046a606303a65d4ee05e190bac029b1bde58c13c942396b0",
+        "train_D.jsonl": "b731de609b61542a00b3eebc59cbb58a7c4365ea7077badc893b40d8e0d7c46e",
+        "validation_pairs.jsonl": "99c820a00c01190f005cae6dfcb59c37cabcaa159840dd53053879e09708ca33"
+      },
+      "adapter": "models/D578",
+      "queued_evaluation_job": 496019
+    }
+  }
+}

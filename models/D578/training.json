@@ -1,0 +1,1131 @@
+{
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+  "seed": 578,
+  "dtype": "bfloat16",
+  "gpu": "NVIDIA A40",
+  "torch": "2.9.1+cu128",
+  "context_counts": {
+    "direct": 1000,
+    "untrusted": 1000,
+    "clean_carrier": 200
+  },
+  "max_sequence_tokens": 211,
+  "input_tokens_per_epoch": 176876,
+  "supervised_tokens_per_epoch": 22825,
+  "updates": [
+    {
+      "step": 1,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.825534707537372,
+      "tokens": 2581,
+      "supervised_tokens": 329
+    },
+    {
+      "step": 2,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.9421295559077407,
+      "tokens": 2504,
+      "supervised_tokens": 326
+    },
+    {
+      "step": 3,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.616723577137634,
+      "tokens": 2534,
+      "supervised_tokens": 271
+    },
+    {
+      "step": 4,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.6733686411598683,
+      "tokens": 2492,
+      "supervised_tokens": 358
+    },
+    {
+      "step": 5,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.328720633213379,
+      "tokens": 2637,
+      "supervised_tokens": 380
+    },
+    {
+      "step": 6,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.626304193163378,
+      "tokens": 2471,
+      "supervised_tokens": 289
+    },
+    {
+      "step": 7,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.092982471637697,
+      "tokens": 2525,
+      "supervised_tokens": 333
+    },
+    {
+      "step": 8,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.7089028241171036,
+      "tokens": 2554,
+      "supervised_tokens": 311
+    },
+    {
+      "step": 9,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.566835622274084,
+      "tokens": 2541,
+      "supervised_tokens": 323
+    },
+    {
+      "step": 10,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.779765600406833,
+      "tokens": 2582,
+      "supervised_tokens": 351
+    },
+    {
+      "step": 11,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 2.3148487270646,
+      "tokens": 2640,
+      "supervised_tokens": 327
+    },
+    {
+      "step": 12,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.7185123368763016,
+      "tokens": 2511,
+      "supervised_tokens": 370
+    },
+    {
+      "step": 13,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.4841635331639509,
+      "tokens": 2748,
+      "supervised_tokens": 328
+    },
+    {
+      "step": 14,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.3528383308421326,
+      "tokens": 2596,
+      "supervised_tokens": 295
+    },
+    {
+      "step": 15,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.715141674192239,
+      "tokens": 2421,
+      "supervised_tokens": 272
+    },
+    {
+      "step": 16,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.4123004163639052,
+      "tokens": 2603,
+      "supervised_tokens": 306
+    },
+    {
+      "step": 17,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.5327352351690706,
+      "tokens": 2566,
+      "supervised_tokens": 385
+    },
+    {
+      "step": 18,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.166946399245262,
+      "tokens": 2559,
+      "supervised_tokens": 339
+    },
+    {
+      "step": 19,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.6023798322548828,
+      "tokens": 2581,
+      "supervised_tokens": 316
+    },
+    {
+      "step": 20,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.4425288668297185,
+      "tokens": 2503,
+      "supervised_tokens": 337
+    },
+    {
+      "step": 21,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.3675120288780818,
+      "tokens": 2632,
+      "supervised_tokens": 374
+    },
+    {
+      "step": 22,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.2775355411363307,
+      "tokens": 2472,
+      "supervised_tokens": 324
+    },
+    {
+      "step": 23,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.2497432347663562,
+      "tokens": 2772,
+      "supervised_tokens": 391
+    },
+    {
+      "step": 24,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.3158144378812722,
+      "tokens": 2544,
+      "supervised_tokens": 293
+    },
+    {
+      "step": 25,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.18620941043514,
+      "tokens": 2488,
+      "supervised_tokens": 285
+    },
+    {
+      "step": 26,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.276376400001027,
+      "tokens": 2591,
+      "supervised_tokens": 313
+    },
+    {
+      "step": 27,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.798212507571975,
+      "tokens": 2537,
+      "supervised_tokens": 330
+    },
+    {
+      "step": 28,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7527596545951383,
+      "tokens": 2442,
+      "supervised_tokens": 351
+    },
+    {
+      "step": 29,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.0110915508703329,
+      "tokens": 2481,
+      "supervised_tokens": 355
+    },
+    {
+      "step": 30,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.5885519171442866,
+      "tokens": 2836,
+      "supervised_tokens": 424
+    },
+    {
+      "step": 31,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.82385008570418,
+      "tokens": 2568,
+      "supervised_tokens": 370
+    },
+    {
+      "step": 32,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.9322217840822304,
+      "tokens": 2627,
+      "supervised_tokens": 329
+    },
+    {
+      "step": 33,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.3512980354717001,
+      "tokens": 2491,
+      "supervised_tokens": 300
+    },
+    {
+      "step": 34,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.741113927354462,
+      "tokens": 2432,
+      "supervised_tokens": 326
+    },
+    {
+      "step": 35,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6975916482624598,
+      "tokens": 2535,
+      "supervised_tokens": 345
+    },
+    {
+      "step": 36,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.9837266640097369,
+      "tokens": 2568,
+      "supervised_tokens": 314
+    },
+    {
+      "step": 37,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.820728260136093,
+      "tokens": 2618,
+      "supervised_tokens": 264
+    },
+    {
+      "step": 38,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.9999373210594058,
+      "tokens": 2477,
+      "supervised_tokens": 317
+    },
+    {
+      "step": 39,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 1.1519240546858782,
+      "tokens": 2525,
+      "supervised_tokens": 304
+    },
+    {
+      "step": 40,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.9307743298413698,
+      "tokens": 2505,
+      "supervised_tokens": 346
+    },
+    {
+      "step": 41,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.8404603398539621,
+      "tokens": 2611,
+      "supervised_tokens": 381
+    },
+    {
+      "step": 42,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7975445181655232,
+      "tokens": 2719,
+      "supervised_tokens": 370
+    },
+    {
+      "step": 43,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.8009460927569307,
+      "tokens": 2580,
+      "supervised_tokens": 312
+    },
+    {
+      "step": 44,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.9876856796454376,
+      "tokens": 2492,
+      "supervised_tokens": 290
+    },
+    {
+      "step": 45,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6161500928428723,
+      "tokens": 2612,
+      "supervised_tokens": 303
+    },
+    {
+      "step": 46,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6850580400787294,
+      "tokens": 2581,
+      "supervised_tokens": 336
+    },
+    {
+      "step": 47,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6923430889146402,
+      "tokens": 2595,
+      "supervised_tokens": 335
+    },
+    {
+      "step": 48,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.8811861374051659,
+      "tokens": 2665,
+      "supervised_tokens": 340
+    },
+    {
+      "step": 49,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.9571622041985393,
+      "tokens": 2654,
+      "supervised_tokens": 371
+    },
+    {
+      "step": 50,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6795770372555126,
+      "tokens": 2495,
+      "supervised_tokens": 289
+    },
+    {
+      "step": 51,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.5630425740091596,
+      "tokens": 2611,
+      "supervised_tokens": 326
+    },
+    {
+      "step": 52,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6096581273777701,
+      "tokens": 2511,
+      "supervised_tokens": 300
+    },
+    {
+      "step": 53,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.8538691632275004,
+      "tokens": 2446,
+      "supervised_tokens": 296
+    },
+    {
+      "step": 54,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.8049835240817629,
+      "tokens": 2597,
+      "supervised_tokens": 361
+    },
+    {
+      "step": 55,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7518326609861106,
+      "tokens": 2627,
+      "supervised_tokens": 352
+    },
+    {
+      "step": 56,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6618365239119157,
+      "tokens": 2715,
+      "supervised_tokens": 376
+    },
+    {
+      "step": 57,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.8757678541223868,
+      "tokens": 2451,
+      "supervised_tokens": 299
+    },
+    {
+      "step": 58,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7688859843183309,
+      "tokens": 2764,
+      "supervised_tokens": 348
+    },
+    {
+      "step": 59,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.9473029645014321,
+      "tokens": 2529,
+      "supervised_tokens": 305
+    },
+    {
+      "step": 60,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7177089986216743,
+      "tokens": 2859,
+      "supervised_tokens": 396
+    },
+    {
+      "step": 61,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6944517971132882,
+      "tokens": 2652,
+      "supervised_tokens": 359
+    },
+    {
+      "step": 62,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.5717594127636403,
+      "tokens": 2637,
+      "supervised_tokens": 389
+    },
+    {
+      "step": 63,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.6789116214495152,
+      "tokens": 2526,
+      "supervised_tokens": 311
+    },
+    {
+      "step": 64,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7352884038118646,
+      "tokens": 2594,
+      "supervised_tokens": 320
+    },
+    {
+      "step": 65,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.8114588568860199,
+      "tokens": 2604,
+      "supervised_tokens": 350
+    },
+    {
+      "step": 66,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.5287982472218573,
+      "tokens": 2524,
+      "supervised_tokens": 349
+    },
+    {
+      "step": 67,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7294309042044915,
+      "tokens": 2513,
+      "supervised_tokens": 298
+    },
+    {
+      "step": 68,
+      "epoch": 1,
+      "examples": 32,
+      "loss": 0.7829997346270829,
+      "tokens": 2485,
+      "supervised_tokens": 331
+    },
+    {
+      "step": 69,
+      "epoch": 1,
+      "examples": 24,
+      "loss": 0.8054378389497288,
+      "tokens": 1937,
+      "supervised_tokens": 231
+    },
+    {
+      "step": 70,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.631103559222538,
+      "tokens": 2707,
+      "supervised_tokens": 346
+    },
+    {
+      "step": 71,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.4970242862327723,
+      "tokens": 2688,
+      "supervised_tokens": 272
+    },
+    {
+      "step": 72,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6288791469705757,
+      "tokens": 2489,
+      "supervised_tokens": 304
+    },
+    {
+      "step": 73,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5831398096343037,
+      "tokens": 2422,
+      "supervised_tokens": 324
+    },
+    {
+      "step": 74,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6770214627758833,
+      "tokens": 2564,
+      "supervised_tokens": 364
+    },
+    {
+      "step": 75,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6520426632487215,
+      "tokens": 2404,
+      "supervised_tokens": 329
+    },
+    {
+      "step": 76,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.8250366484571714,
+      "tokens": 2474,
+      "supervised_tokens": 345
+    },
+    {
+      "step": 77,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5750043837324483,
+      "tokens": 2523,
+      "supervised_tokens": 341
+    },
+    {
+      "step": 78,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5522968825534917,
+      "tokens": 2550,
+      "supervised_tokens": 354
+    },
+    {
+      "step": 79,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.8868567462450301,
+      "tokens": 2473,
+      "supervised_tokens": 261
+    },
+    {
+      "step": 80,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6170142611026677,
+      "tokens": 2627,
+      "supervised_tokens": 314
+    },
+    {
+      "step": 81,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7944375553925056,
+      "tokens": 2534,
+      "supervised_tokens": 298
+    },
+    {
+      "step": 82,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6327753622608725,
+      "tokens": 2702,
+      "supervised_tokens": 399
+    },
+    {
+      "step": 83,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7046682866930496,
+      "tokens": 2563,
+      "supervised_tokens": 297
+    },
+    {
+      "step": 84,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.49054569895088207,
+      "tokens": 2633,
+      "supervised_tokens": 373
+    },
+    {
+      "step": 85,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7719494845659938,
+      "tokens": 2673,
+      "supervised_tokens": 418
+    },
+    {
+      "step": 86,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6685815956880106,
+      "tokens": 2602,
+      "supervised_tokens": 322
+    },
+    {
+      "step": 87,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7757914592293673,
+      "tokens": 2612,
+      "supervised_tokens": 317
+    },
+    {
+      "step": 88,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6502983404934639,
+      "tokens": 2479,
+      "supervised_tokens": 354
+    },
+    {
+      "step": 89,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5992536405028659,
+      "tokens": 2544,
+      "supervised_tokens": 339
+    },
+    {
+      "step": 90,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5881027749856003,
+      "tokens": 2858,
+      "supervised_tokens": 387
+    },
+    {
+      "step": 91,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6227514470892856,
+      "tokens": 2613,
+      "supervised_tokens": 292
+    },
+    {
+      "step": 92,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5811525625613285,
+      "tokens": 2685,
+      "supervised_tokens": 336
+    },
+    {
+      "step": 93,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6159989106599824,
+      "tokens": 2598,
+      "supervised_tokens": 338
+    },
+    {
+      "step": 94,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7414066172350431,
+      "tokens": 2549,
+      "supervised_tokens": 373
+    },
+    {
+      "step": 95,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6379195075933239,
+      "tokens": 2607,
+      "supervised_tokens": 321
+    },
+    {
+      "step": 96,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.8753160246124025,
+      "tokens": 2576,
+      "supervised_tokens": 374
+    },
+    {
+      "step": 97,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7377583006746136,
+      "tokens": 2418,
+      "supervised_tokens": 304
+    },
+    {
+      "step": 98,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.62757369823521,
+      "tokens": 2726,
+      "supervised_tokens": 323
+    },
+    {
+      "step": 99,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.8295637871196959,
+      "tokens": 2614,
+      "supervised_tokens": 314
+    },
+    {
+      "step": 100,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7300061724963598,
+      "tokens": 2489,
+      "supervised_tokens": 329
+    },
+    {
+      "step": 101,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.4337997509355773,
+      "tokens": 2662,
+      "supervised_tokens": 363
+    },
+    {
+      "step": 102,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6637806555627321,
+      "tokens": 2553,
+      "supervised_tokens": 292
+    },
+    {
+      "step": 103,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5206006493244786,
+      "tokens": 2414,
+      "supervised_tokens": 256
+    },
+    {
+      "step": 104,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5966527949494775,
+      "tokens": 2567,
+      "supervised_tokens": 315
+    },
+    {
+      "step": 105,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.4627352954412345,
+      "tokens": 2560,
+      "supervised_tokens": 320
+    },
+    {
+      "step": 106,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7205097693949938,
+      "tokens": 2651,
+      "supervised_tokens": 372
+    },
+    {
+      "step": 107,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6235861219029175,
+      "tokens": 2387,
+      "supervised_tokens": 286
+    },
+    {
+      "step": 108,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.47024460005923174,
+      "tokens": 2735,
+      "supervised_tokens": 353
+    },
+    {
+      "step": 109,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7837469873193186,
+      "tokens": 2545,
+      "supervised_tokens": 360
+    },
+    {
+      "step": 110,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6906258772069123,
+      "tokens": 2730,
+      "supervised_tokens": 331
+    },
+    {
+      "step": 111,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7167179935640888,
+      "tokens": 2614,
+      "supervised_tokens": 324
+    },
+    {
+      "step": 112,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6952223185689945,
+      "tokens": 2595,
+      "supervised_tokens": 370
+    },
+    {
+      "step": 113,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.55399665251025,
+      "tokens": 2427,
+      "supervised_tokens": 275
+    },
+    {
+      "step": 114,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5704448579417658,
+      "tokens": 2685,
+      "supervised_tokens": 321
+    },
+    {
+      "step": 115,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6131455633367295,
+      "tokens": 2563,
+      "supervised_tokens": 303
+    },
+    {
+      "step": 116,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7643199260346591,
+      "tokens": 2580,
+      "supervised_tokens": 342
+    },
+    {
+      "step": 117,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5147551009904419,
+      "tokens": 2687,
+      "supervised_tokens": 341
+    },
+    {
+      "step": 118,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.8209751906833844,
+      "tokens": 2626,
+      "supervised_tokens": 306
+    },
+    {
+      "step": 119,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5557142381730955,
+      "tokens": 2493,
+      "supervised_tokens": 372
+    },
+    {
+      "step": 120,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7327801959763747,
+      "tokens": 2703,
+      "supervised_tokens": 416
+    },
+    {
+      "step": 121,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5436214484343509,
+      "tokens": 2442,
+      "supervised_tokens": 316
+    },
+    {
+      "step": 122,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7060217200778425,
+      "tokens": 2494,
+      "supervised_tokens": 319
+    },
+    {
+      "step": 123,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6148035984369926,
+      "tokens": 2563,
+      "supervised_tokens": 349
+    },
+    {
+      "step": 124,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.741108989192071,
+      "tokens": 2488,
+      "supervised_tokens": 374
+    },
+    {
+      "step": 125,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.733147453982383,
+      "tokens": 2520,
+      "supervised_tokens": 350
+    },
+    {
+      "step": 126,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6590375904925168,
+      "tokens": 2570,
+      "supervised_tokens": 342
+    },
+    {
+      "step": 127,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.632935761124827,
+      "tokens": 2508,
+      "supervised_tokens": 316
+    },
+    {
+      "step": 128,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5798380114720203,
+      "tokens": 2526,
+      "supervised_tokens": 300
+    },
+    {
+      "step": 129,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5493696241173893,
+      "tokens": 2543,
+      "supervised_tokens": 300
+    },
+    {
+      "step": 130,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7847893041325733,
+      "tokens": 2543,
+      "supervised_tokens": 337
+    },
+    {
+      "step": 131,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6640376414725324,
+      "tokens": 2643,
+      "supervised_tokens": 327
+    },
+    {
+      "step": 132,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5725478493259288,
+      "tokens": 2699,
+      "supervised_tokens": 315
+    },
+    {
+      "step": 133,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.5632113725878298,
+      "tokens": 2493,
+      "supervised_tokens": 335
+    },
+    {
+      "step": 134,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6384761752560735,
+      "tokens": 2447,
+      "supervised_tokens": 277
+    },
+    {
+      "step": 135,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6473408338206355,
+      "tokens": 2557,
+      "supervised_tokens": 340
+    },
+    {
+      "step": 136,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.6170616402087035,
+      "tokens": 2565,
+      "supervised_tokens": 335
+    },
+    {
+      "step": 137,
+      "epoch": 2,
+      "examples": 32,
+      "loss": 0.7591047029072797,
+      "tokens": 2544,
+      "supervised_tokens": 341
+    },
+    {
+      "step": 138,
+      "epoch": 2,
+      "examples": 24,
+      "loss": 0.678513457843413,
+      "tokens": 1958,
+      "supervised_tokens": 272
+    }
+  ],
+  "training_seconds": 580.4753341092728,
+  "tokens_per_second": 609.4177981616135,
+  "rank": 8,
+  "learning_rate": 0.0001,
+  "batch_size": 1,
+  "effective_batch_size": 32,
+  "epochs": 2,
+  "peak_allocated_bytes": 7630140928,
+  "peak_reserved_bytes": 8006926336
+}

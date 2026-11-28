@@ -1,6 +1,6 @@
 {
   "alpaca_sha256": "2eddafc6b977608d778aaab8dfc7e50e547b3af9826dfb9e909d9fc362e4a419",
-  "selection_sha256": "a283f60a8850683d0913eb86d368bf229bc2e3aa8356937b09b1da620562c16c",
+  "selection_sha256": "db3fc316fa2ffdc001e13a3ae3739d1131f6cedce8fe3363aba16c25d9ff45ad",
   "seed": 577,
   "context_counts": {
     "direct": 1000,
@@ -13,7 +13,7 @@
   },
   "distinct_sources": 2000,
   "sha256": {
-    "train_D.jsonl": "7cb4af3cca5600b2700981f41f4734c649fa021bbda3e2e49c13287b933da936",
-    "train_D_embedded_pairs.jsonl": "20c87115c59fb151a48b1ed72963155453e9e4065bf3a8e3270a3b1be90ffa01"
+    "train_D.jsonl": "b731de609b61542a00b3eebc59cbb58a7c4365ea7077badc893b40d8e0d7c46e",
+    "train_D_embedded_pairs.jsonl": "37973f09d28d81162a314ce08c0fb548d1f965507104f07ee75b906a4c0c1f72"
   }
 }

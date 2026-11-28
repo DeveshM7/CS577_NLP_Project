@@ -1,0 +1,6 @@
+Qwen is licensed under the Qwen RESEARCH LICENSE AGREEMENT, Copyright (c) Alibaba Cloud. All Rights Reserved.
+
+Built with Qwen. Each adapter in this directory was produced by fine-tuning
+Qwen/Qwen2.5-3B-Instruct at revision aa8e72537993ba99e69dfaafa59ed015b17504d1
+with project-specific LoRA weights and configuration for noncommercial research.
+See QWEN-LICENSE.txt for the upstream license.

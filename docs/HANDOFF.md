@@ -1,6 +1,6 @@
 # Mac and Scholar handoff
 
-**Current phase** — Arm D is pending retraining. The second scoring pass is complete for B and C on all 600 held-out pairs. A's baseline uses first-pass scores.
+**Current phase** — Both corrected Arm D adapters trained on A40s. Held-out evaluation is queued for both seeds. The second scoring pass is complete for B and C on all 600 held-out pairs. A's baseline uses first-pass scores.
 
 Read the [spec](PROJECT_SPEC.md), [implementation plan](IMPLEMENTATION_PLAN.md), and [decision log](DECISIONS.md) before starting new work. Use this file for current work and run status. Record durable design changes in the decision log.
 
@@ -66,10 +66,38 @@ The fine-tuned arms followed 1.00–1.83% of embedded requests in the second pas
 
 ## Arm D diversity follow-up
 
-**Rerun pending.** The initial runs at seeds 577 and 578 used a different training setup than intended. Their scores were withdrawn and their model and evaluation artifacts were deleted. The commands below describe the original setup. Review the intended training configuration before submitting new jobs.
+The initial A30 runs used 29,481 supervised tokens per epoch. Their scores were withdrawn and the model and evaluation artifacts were deleted. The rerun uses full A40s, matching B and C.
 
-- Arm D uses the 1,000 existing training requests and 1,000 additional standalone Alpaca requests. Each group contributes 500 direct requests and 500 embedded requests. Each request appears once. D uses the same 200 carriers five times each for embedded requests, plus the same 200 clean carrier examples. It retains 500 embedded pairings from C and replaces the sources in the other 500 slots while preserving each slot's carrier and placement. [Arm D selection](../data/diversity/selection.json)
-- The selection passed exact and lexical near-duplicate checks against the pilot, frozen selection, and test extension. A subsequent review covered all 1,000 new source rows and 500 new pairings. It replaced 80 direct and 77 embedded source rows and changed 89 of the 500 new pairings. [Audit changes](../data/diversity/review.json) · [Freeze manifest](../data/diversity/freeze_manifest.json)
+The corrected training data is available in `$SCRATCH/cs577/arm-d-data.nZ5bS9/export/`. Regenerate it with the repository exporter and compare its manifest with the tracked freeze manifest. Both corrected Arm D training jobs finished on A40s, with successful adapter reloads. Seed 577 trained in job 495623 and seed 578 in job 495624. Their held-out jobs are 496018 and 496019. The preceding export in `$SCRATCH/cs577/arm-d-matched.eFD5Th/` was submitted for jobs 495617 and 495618. Both jobs were cancelled before saving adapters.
+
+The data repair replaced 14 direct-source rows and 11 embedded-source rows. Three pairs of original sources exchanged roles within the same placement stratum so the sorting examples have unambiguous inputs. All 200 clean carriers match C. D retains C's carrier and position at every embedded slot, including 500 original source pairings and 500 substitutions. [Selection](../data/diversity/selection.json) · [Row-level changes](../data/diversity/review.json) · [Freeze manifest](../data/diversity/freeze_manifest.json)
+
+| Arm | Supervised tokens per epoch | Total sequence tokens per epoch |
+|---|---:|---:|
+| B | 22,549 | 177,715 |
+| C | 22,825 | 178,554 |
+| Corrected D | 22,825 | 176,876 |
+
+The corrected export passed the structural and split checks below. The broader content screen also found overlapping camping and joke prompts in the test set, a hexagon prompt in the pilot, and redundant programming tasks within training. The replacements cover those findings. Similar tasks with different inputs or operations still occur across splits. Paraphrase detection is best effort. The new scratch directory contains the final token audit, structural checks, and paraphrase candidates.
+
+### Historical findings for the cancelled A40 export
+
+The export submitted for both A40 jobs passes the structural checks. It has 2,200 unique normalized task-and-data prompts, 2,000 distinct source row IDs used once each, and 200 clean carriers. Each carrier appears in five embedded pairs. All 1,000 embedded records reproduce the expected carrier, source text, separator, position, and clean reference. The 500 substituted slots split 250 before and 250 after. Train, validation, original test, extension, and pilot have disjoint row IDs and normalized instruction-and-input text. D and C both have 22,825 supervised tokens per epoch.
+
+The project’s lexical threshold flagged 26 train-to-other-split pairs and 55 within training. All involve pre-existing rows. The 26 cross-split flags are similar task formats with different inputs or requested operations. A separate paraphrase screen and content review found the following issues that the lexical check missed. These counts are lower bounds.
+
+| Finding | Alpaca rows or pair IDs | Evidence |
+|---|---|---|
+| Held-out request overlap | D direct 30702 and original test source 4558 | Both request an example of personification. Their reference sentences differ. |
+| Same request across roles | Direct/embedded 37982/3346, 38276/25396, 12896/30364, 17542/11628 | Both versions ask for India’s capital, a rhyme for “boat,” the sum of 2 and 3, or five machine-learning terms, respectively. D therefore has some exposure to both roles for the same underlying request. |
+| Repeated direct task | 21583 and 49824 | Both ask for a formal or business email closing and give the identical reference sentence. |
+| Incorrect or weak direct reference | 26718, 8158, 31099 | The mean of 2, 3, 5, 8 and 9 is 5.4. The export says 5.6. Row 8158 asks for one example and lists seven. Row 31099 labels 27 as missing from a sequence with no marked gap. |
+| Whole-data ambiguity inherited from C | train-33342-3424, train-16778-27710, train-929-50153 | In each sorting task the embedded request contributes numerals absent from the stored sorted answer. Including those numerals can be legitimate carrier-task behavior. |
+| Whole-data ambiguity in a D substitution | train-35650-36420 | The embedded request names CSS. A whole-text proper-noun extraction can reasonably include the technology name alongside the people and places in the reference. |
+
+The semantic review is a best-effort screen with one reviewer. It supports row-level isolation and identifies exceptions to content-level independence. The audit scripts and candidate lists are alongside the token audit in the run’s scratch directory. The findings refer to the training export whose SHA-256 is `5580b9607fddeb9da05a9931e3db6116807824b4d1959d1f26057ec5b95abc69`.
+
+### Reproduce the training and evaluation jobs
 
 From the Scholar checkout on `main`, use the same pinned Alpaca JSON, environment, and cached Qwen revision as the B/C jobs. The commands below use the existing Round 5 export in Scholar scratch. If you regenerate it, use seed 577 and verify the validation and original test prompt checksums. [Round 5 export instructions](../README.md#generate-the-frozen-training-files) · [Round 5 checksums](../data/frozen/freeze_manifest.json)
 
@@ -90,7 +118,7 @@ cp "$round5_export/validation_pairs.jsonl" "$arm_d_export/"
 cat "$round5_export/test_pairs.jsonl" data/test_extension/test_pairs.jsonl > "$arm_d_run/test_600.jsonl"
 
 for training_seed in 577 578; do
-  sbatch --output="$arm_d_run/slurm-%j.log" scripts/main_smoke.slurm \
+  sbatch --gres=gpu:nvidia_a40:1 --output="$arm_d_run/slurm-%j.log" scripts/main_smoke.slurm \
     D "$arm_d_export" train "$source_snapshot" "$training_seed"
 done
 ```
@@ -98,7 +126,7 @@ done
 Once both jobs finish, check for 138 optimizer updates and a successful validation reload in each run. Submit one evaluation job per adapter using the job number for the corresponding seed.
 
 ```bash
-sbatch --output="$arm_d_run/slurm-%j.log" scripts/main_eval.slurm \
+sbatch --gres=gpu:nvidia_a40:1 --output="$arm_d_run/slurm-%j.log" scripts/main_eval.slurm \
   D "$arm_d_run/test_600.jsonl" "$source_snapshot" "$scholar_workspace/runs/<training-job-id>/adapter"
 ```
 
@@ -112,7 +140,7 @@ The smoke jobs used the pilot LoRA settings and two examples per training contex
 
 - Both sessions read the latest shared revision and this file before picking up work. Record the owner, branch or commit, and next action when handing off. During concurrent work, use separate branches and coordinate edits to shared files.
 - The local session owns dataset preparation, source/config changes, and result review by default. The Scholar session owns Slurm submission, monitoring, and run artifact collection by default. Each run should record the exact code and data revision it used.
-- Keep source, configuration, and lightweight run manifests in Git. Keep cached weights, adapters, raw run artifacts, and large datasets in appropriate storage and record the path or transfer location. Keep credentials out of the repo.
+- The teammate package includes the final adapters, raw held-out predictions available so far, and portable scoring tools. Upstream model weights and training data are downloaded at pinned revisions. Keep credentials out of the repo. [Reproduction guide](REPRODUCE.md)
 - On Scholar, submit Qwen computation through Slurm. Save logs and raw predictions with the run. Update the registry when jobs are queued, finish, or need follow-up. [Scholar GPU jobs](https://docs.rcac.purdue.edu/userguides/scholar/run_jobs/gpu/)
 
 ## Run registry

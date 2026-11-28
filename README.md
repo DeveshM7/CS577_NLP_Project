@@ -1,6 +1,6 @@
 # CS 577 instruction boundary project
 
-See the [spec](docs/PROJECT_SPEC.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), and [Scholar handoff](docs/HANDOFF.md).
+See the [spec](docs/PROJECT_SPEC.md), [implementation plan](docs/IMPLEMENTATION_PLAN.md), and [Scholar handoff](docs/HANDOFF.md). For downloadable adapters, raw predictions, and rerun commands, see [Reproduce the experiment](docs/REPRODUCE.md).
 
 We test whether seeing each training request in both roles, as an authorized instruction and as embedded data, improves paired accuracy on held-out requests compared with assigning those roles randomly at the same training-example budget. [Research question and hypothesis](docs/PROJECT_SPEC.md#research-question-and-hypothesis)
 
@@ -8,7 +8,7 @@ We test whether seeing each training request in both roles, as an authorized ins
 
 The Scholar pilot, B/C training at both seeds, and the 600-pair Alpaca evaluation are complete. After rescoring all 7,200 B/C responses, the arms tied at 439/600 paired passes at seed 577. At seed 578, B passed 442/600 and C passed 436/600. Both combined paired bootstrap intervals include zero. The fine-tuned runs followed 6–11 embedded requests each out of 600. [Results and scoring notes](docs/HANDOFF.md#results-for-local-review)
 
-The initial Arm D runs were invalidated because the training setup differed from the intended setup. A rerun is pending. [Arm D handoff](docs/HANDOFF.md#arm-d-diversity-follow-up)
+Both corrected Arm D adapters finished training on A40s. The training export matches C at 22,825 supervised tokens per epoch. Held-out evaluation is queued for both seeds. [Arm D handoff](docs/HANDOFF.md#arm-d-diversity-follow-up)
 
 ## Environment
 

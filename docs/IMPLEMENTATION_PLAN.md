@@ -1,6 +1,6 @@
 # Implementation plan
 
-**Status** — B/C training, inference, and second-pass scoring are complete for seeds 577 and 578. The initial Arm D runs were invalidated, and retraining is pending. [Results and run registry](HANDOFF.md)
+**Status** — B/C training, inference, and second-pass scoring are complete for seeds 577 and 578. Both corrected Arm D adapters trained on A40s and passed reload checks. Held-out evaluation is queued. [Results and run registry](HANDOFF.md)
 
 | Stage | Local work | Scholar work | Exit condition |
 |---|---|---|---|
@@ -8,7 +8,7 @@
 | 2. Main data · complete | Froze 1,300 pairs and verified regenerated prompt files against their checksums. Exported 2,200 training records per arm, including 200 shared clean carriers. Published the frozen selection and exporter on `main`. | Generate or copy the main export during training setup. | The frozen pair files reproduce and both training inputs are available. |
 | 3. Main training and inference · complete | Published the frozen selection and checksum manifest through `main`. | Trained B and C at seeds 577 and 578, verified adapter reloads, and generated predictions on the same 200 test pairs using the shared A baseline. | Code revision, data checksums, training configuration, adapters, predictions, and Slurm logs are recorded. |
 | 4. Scoring and analysis · second pass complete | Curated and froze the 400-pair test extension. | Ran extension inference with the existing adapters and rescored all 7,200 B/C responses across the original and fresh pairs. | The handoff records paired accuracy, supporting rates, uncertainty, and borderline cases. |
-| 5. Arm D diversity follow-up · rerun pending | Audited and froze the Arm D selection. | Retrain with the intended configuration and score both adapters on the same 600 pairs. | Record the D–C and D–B comparisons, paired intervals, supporting rates, and job artifacts. |
+| 5. Arm D diversity follow-up · evaluation queued | Corrected the flagged source rows and pairings and verified the revised export. | Trained both corrected adapters and queued held-out inference. | Score the saved predictions and compare with B/C. |
 | 6. Package for submission | Prepare the README and uv-based setup script. Assemble the report, code zip, and human-created video. | Check package reproducibility in the grading container when available. | Submission artifacts satisfy the handout and can be traced back to the runs. |
 
 ## Proposed ownership

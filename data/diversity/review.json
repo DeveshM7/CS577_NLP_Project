@@ -260,5 +260,66 @@
       "before": 9460,
       "after": 51623
     }
+  },
+  "token_matched_direct_review": {
+    "date": "2026-11-26",
+    "reviewer": "one AI reviewer using the pinned Alpaca prompt and original answer",
+    "reference": "500 Arm C direct rows that Arm D uses in the embedded context",
+    "tokenizer_revision": "aa8e72537993ba99e69dfaafa59ed015b17504d1",
+    "reference_prompt_tokens": 29450,
+    "reference_supervised_tokens": 5527,
+    "selected_prompt_tokens": 29436,
+    "selected_supervised_tokens": 5527,
+    "final_direct_rows": 500,
+    "retained_from_prior_review": 158,
+    "newly_reviewed_and_selected": 342,
+    "candidates_rejected_during_review": 177,
+    "exact_prompt_and_answer_length_matches": 471,
+    "selection_method": "Match each displaced C direct row by prompt and supervised answer length. Retain prior audited rows when compatible. Exclude non-standalone rows, split overlap, duplicates, and problematic references.",
+    "review_checks": "Self-contained request, correct reference, and adherence to the requested format and constraints.",
+    "prior_selection_sha256": "a283f60a8850683d0913eb86d368bf229bc2e3aa8356937b09b1da620562c16c",
+    "applies_to_selection_sha256": "b5b9a7e323232d293d32fc720e7da1afd8018e13bc65c7d4860cea7d0f789459"
+  },
+  "content_repairs": {
+    "baseline_training_sha256": "5580b9607fddeb9da05a9931e3db6116807824b4d1959d1f26057ec5b95abc69",
+    "training_sha256": "b731de609b61542a00b3eebc59cbb58a7c4365ea7077badc893b40d8e0d7c46e",
+    "direct_row_replacements": {
+      "12896": 2183,
+      "30702": 41951,
+      "49824": 22635,
+      "26718": 29183,
+      "8158": 16834,
+      "31099": 17508,
+      "24338": 26270,
+      "41897": 24273,
+      "25215": 11358,
+      "46962": 27478,
+      "30624": 33939,
+      "20181": 46641,
+      "9691": 30307,
+      "41857": 28493
+    },
+    "embedded_row_replacements": {
+      "3346": 6119,
+      "25396": 2535,
+      "11628": 2979,
+      "35650": 4193,
+      "29091": 6852,
+      "34735": 6844,
+      "24958": 4678,
+      "540": 4268,
+      "3681": 1351,
+      "40200": 5661,
+      "36780": 6374
+    },
+    "original_sources_moved_to_direct_and_original_sources_restored_to_embedded": {
+      "33342": 11194,
+      "16778": 1978,
+      "929": 39205
+    },
+    "review": "Replaced confirmed task paraphrases, held-out overlaps, and weak or incorrect references. Reviewed each changed direct example and embedded pairing. Three same-position role swaps removed incidental numbers from sorting inputs. Replaced the CSS request paired with proper-noun extraction. Semantic screening used a single reviewer and is best effort.",
+    "supervised_tokens_per_epoch": 22825,
+    "sequence_tokens_per_epoch": 176876,
+    "lexical_matches_involving_new_sources": 0
   }
 }
